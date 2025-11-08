@@ -112,6 +112,5 @@ func EditUserData(c *gin.Context){
 		}
 
 		c.JSON(http.StatusOK, gin.H{"message": "Dados atualizados com sucesso."})
-	
 }
 

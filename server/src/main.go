@@ -17,7 +17,7 @@ func main(){
 	}
 
 	config.ConnectDatabase()
-	config.DB.AutoMigrate(&models.User{}, &models.Post{}, &models.Tags{})
+	config.DB.AutoMigrate(&models.User{}, &models.Post{}, &models.Tags{}, &models.Comment{})
 
 	router := gin.Default()
 	routes.SetupRoutes(router)

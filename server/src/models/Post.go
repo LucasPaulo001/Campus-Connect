@@ -3,8 +3,8 @@ package models
 import "time"
 
 type Tags struct{
-	ID		uint	`gorm:primaryKey`
-	Name	string	`gorm:unique`
+	ID		uint	`gorm:"primaryKey"`
+	Name	string	`gorm:"unique"`
 }
 
 type Post struct{
@@ -13,6 +13,7 @@ type Post struct{
 	Title		string		`json:"title"`
 	User		User
 	Content		string		`json:"content"`
+	Comments	[]Comment	`gorm:"foreignKey:PostID"`
 	Tags		[]Tags		`gorm:"many2many:post_tags"`
 	CreatedAt	time.Time
 }
