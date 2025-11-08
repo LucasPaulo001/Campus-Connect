@@ -16,4 +16,5 @@ func SetupRoutes(r *gin.Engine){
 	auth.GET("/profile", controllers.Profile)
 	auth.POST("/posts", controllers.CreatePost)
 	auth.GET("/posts", controllers.GetPosts)
+	auth.PATCH("/profile", controllers.EditUserData)
 }
