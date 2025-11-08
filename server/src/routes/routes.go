@@ -12,5 +12,8 @@ func SetupRoutes(r *gin.Engine){
 
 	auth := r.Group("/api")
 	auth.Use(middlewares.Auth())
+
 	auth.GET("/profile", controllers.Profile)
+	auth.POST("/posts", controllers.CreatePost)
+	auth.GET("/posts", controllers.GetPosts)
 }

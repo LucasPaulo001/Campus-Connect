@@ -1,12 +1,15 @@
 package controllers
 
 import (
+	"errors"
 	"net/http"
+
 	"github.com/LucasPaulo001/Campus-Connect/src/config"
 	"github.com/LucasPaulo001/Campus-Connect/src/models"
 	"github.com/LucasPaulo001/Campus-Connect/src/utils"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 // Registro
@@ -26,14 +29,30 @@ func Register(c *gin.Context) {
 
 	// Verificando nome de usuário
 	var existingUser models.User
-	if err := config.DB.Where("name_user = ?", body.NameUser).First(&existingUser).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Nome de usuário já em uso."})
+	err := config.DB.Where("name_user = ?", body.NameUser).First(&existingUser).Error
+		if err != nil && err != gorm.ErrRecordNotFound {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Username já em uso"})
 		return
 	}
 
 	// Verificando email
-	if err := config.DB.Where("email = ?", body.Email).First(&existingUser).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Email já cadastrado."})
+	var existingEmail models.User
+	errEmail := config.DB.Where("email = ?", body.Email).First(&existingEmail).Error
+
+	if errEmail != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		// erro real do banco
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if errEmail == nil {
+		// email encontrado
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Email já cadastrado"})
 		return
 	}
 
