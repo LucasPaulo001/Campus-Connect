@@ -14,10 +14,12 @@ import (
 )
 
 func main(){
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Erro ao carregar arquivo .env")
+	if err := godotenv.Load(); err == nil {
+		log.Println("Arquivo .env carregado com sucesso.")
+	} else {
+		log.Println("Rodando sem .env (Render usa variáveis de ambiente).")
 	}
+
 
 	config.ConnectDatabase()
 	config.DB.AutoMigrate(
