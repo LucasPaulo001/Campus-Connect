@@ -13,6 +13,7 @@ interface IAuthContextProps {
     loadProfile: () => Promise<void>
     user: IUser | null
     forgout_pass: (email: string) => Promise<any>
+    logout: () => void
 
 }
 
@@ -90,7 +91,7 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
         setLoading(true);
         try{
             const res = await forgoutPass(email);
-            console.log(res);
+            toast.success(res.message)
         }
         catch(err){
             console.log(err);
@@ -100,6 +101,13 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
         }
     }
 
+    // Logout
+    const logout = () => {
+        localStorage.removeItem("token");
+        setToken("");
+        setUser(null);
+    }
+
     const contextValues: IAuthContextProps = {
         loginFunc,
         loading,
@@ -107,7 +115,8 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
         token,
         loadProfile,
         user,
-        forgout_pass
+        forgout_pass,
+        logout
     }
 
     return(

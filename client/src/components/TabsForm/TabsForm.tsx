@@ -17,6 +17,7 @@ import * as z from "zod";
 import Link from "next/link";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Spinner } from "../ui/spinner";
+import { toast } from "sonner";
 
 const loginSchema = z.object({
   email: z.string().email("E-mail inválido"),
@@ -42,6 +43,7 @@ const registerSchema = z
 
 export function TabsDemo() {
   const { loginFunc, loading, registerFunc } = useAuthContext();
+  const { user } = useAuthContext();
 
   // Login
   const {
@@ -64,6 +66,7 @@ export function TabsDemo() {
   // Enviando dados para o contexto login
   const onLogin = async (data: any) => {
     await loginFunc(data.email, data.password);
+    toast(`Bem vindo(a)`);
   };
 
   // Enviando dados para o contexto registro

@@ -25,7 +25,7 @@ export const profile = async (token: string) => {
 
 // Forgout password
 export const forgoutPass = async(email: string) => {
-    const res = await axiosInstace.post("/api/forgout/pass", { email });
+    const res = await axiosInstace.post("/forgout/pass", { email });
     return res.data;
 }
 

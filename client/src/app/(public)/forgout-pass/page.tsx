@@ -26,6 +26,7 @@ export default function ForgoutPass() {
 
     const sendSubmit = async (data: any) => {
         await forgout_pass(data.email);
+        console.log(data.email)
     }
 
     return (

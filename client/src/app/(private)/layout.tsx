@@ -4,6 +4,8 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { LoadingPage } from "@/components/Loading/LoadingPage";
+import { Navbar } from "@/components/Navbar/Navbar";
+import Footer from "@/components/Footer/Footer";
 
 export default function PrivateLayout({
   children,
@@ -22,5 +24,13 @@ export default function PrivateLayout({
   if (loading) return <LoadingPage />;
   if (!token) return null;
 
-  return <>{children}</>;
+  return(
+    <>
+      <Navbar />
+      <div className="h-screen mt-10 pt-[var(--header-height)]">
+        {children}
+      </div>
+      <Footer />
+    </>
+  ) 
 }
