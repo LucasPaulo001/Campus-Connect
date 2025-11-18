@@ -26,10 +26,6 @@ interface IProfileMenuProps {
 export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
   const { logout, user } = useAuthContext();
 
-  useEffect(() => {
-    console.log(user);
-  }, []);
-
   return (
     <Sheet>
       <SheetTrigger asChild>

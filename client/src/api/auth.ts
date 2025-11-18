@@ -1,4 +1,3 @@
-import { useAuthContext } from "@/contexts/AuthContext";
 import axiosInstace from "./axiosInstance";
 
 // Login
