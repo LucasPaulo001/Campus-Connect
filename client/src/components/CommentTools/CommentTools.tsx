@@ -11,12 +11,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { BiPencil, BiTrash } from "react-icons/bi"
+import { Dialogs } from "../Dialog/Dialog"
 
 interface ICommentToolsProps {
-    ID: number
+    ID: number,
+    content: string
 }
 
-export function CommentTools({ ID }: ICommentToolsProps) {
+export function CommentTools({ ID, content }: ICommentToolsProps) {
 
   return (
     <>
@@ -28,14 +30,13 @@ export function CommentTools({ ID }: ICommentToolsProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-40" align="end">
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <div className="cursor-pointer">
               <BiTrash />
               Excluir 
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <BiPencil />
-              Editar
-            </DropdownMenuItem>
+            </div>
+            <div className="cursor-pointer">
+              <Dialogs content={content} ID={ID} />
+            </div>
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>

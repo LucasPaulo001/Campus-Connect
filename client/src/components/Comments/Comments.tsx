@@ -102,7 +102,7 @@ export function Comments({ post_id }: ICommentsProps) {
                     <p className="text-sm font-semibold">
                       {c.User.name} - {convertDate(c.created_at)}
                     </p>
-                    {c.User.id === user?.id && <CommentTools ID={c.ID} />}
+                    {c.User.id === user?.id && <CommentTools ID={c.ID} content={c.content} />}
                   </span>
                   <p className="text-sm">{c.content}</p>
                 </div>

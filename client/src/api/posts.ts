@@ -64,12 +64,35 @@ export const loadComments = async (post_id: number, token: string) => {
 };
 
 //Criar comentáio
-export const createComents = async (content: string, post_id: number, token: string) => {
+export const createComents = async (
+  content: string,
+  post_id: number,
+  token: string
+) => {
   const res = await axiosInstace.post(
     `/api/post/${post_id}/comments`,
     {
       content,
     },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data;
+};
+
+// Editar comentário
+export const editComment = async (
+  commentId: number,
+  content: string,
+  token: string
+) => {
+  const res = await axiosInstace.put(
+    `/api/comment/${commentId}`,
+    { content },
     {
       headers: {
         Authorization: `Bearer ${token}`,
