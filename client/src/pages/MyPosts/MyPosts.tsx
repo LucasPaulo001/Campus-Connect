@@ -1,12 +1,12 @@
 "use client";
 
-import { LoadMyPosts } from "@/api/posts";
 import { LoadingPage } from "@/components/Loading/LoadingPage";
 import { PostCard } from "@/components/PostCard/PostCard";
 import { useActionContext } from "@/contexts/ActionsContext";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { IMyPost } from "@/types";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import Image from "next/image";
+import { NotFound } from "@/components/NotFound/NotFound";
 
 export const MyPostsPage = () => {
 
@@ -21,9 +21,7 @@ export const MyPostsPage = () => {
 
   if (myPosts?.length == 0) {
     return (
-      <span className="text-2xl text-gray-500 h-50 flex flex-col justify-center items-center">
-        Você ainda não fez nenhuma postagem
-      </span>
+      <NotFound text="Você não tem postagens..." />
     );
   }
 
