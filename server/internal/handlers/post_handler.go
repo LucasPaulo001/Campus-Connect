@@ -208,7 +208,43 @@ func GetPostsUser(c *gin.Context) {
 			return
 		}
 		
-	c.JSON(http.StatusOK, posts)
+	var response []dto.PostResponse
+
+	for _, post := range posts {
+		// contar likes
+		var likesCount int64
+		config.DB.
+			Model(&models.LikePost{}).
+			Where("post_id = ?", post.ID).
+			Count(&likesCount)
+
+		// verificar se o próprio usuário curtiu
+		var liked bool
+		var like models.LikePost
+		err := config.DB.
+			Where("post_id = ? AND user_id = ?", post.ID, userId).
+			First(&like).Error
+
+		liked = err == nil
+
+		response = append(response, dto.PostResponse{
+			ID:      post.ID,
+			Title:   post.Title,
+			Content: post.Content,
+			User: dto.UserInfo{
+				ID:    post.User.ID,
+				Name:  post.User.Name,
+				Email: post.User.Email,
+				Role:  post.User.Role,
+			},
+			LikesCount: likesCount,
+			LikedByMe:  liked,
+			Tags: post.Tags,
+			CreatedAt:  post.CreatedAt,
+		})
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 //Listagem de postagem do feed
@@ -224,6 +260,7 @@ func GetPosts(c *gin.Context) {
 	var posts []models.Post
 
 	query := config.DB.
+		Preload("Tags").
 		Preload("User").
 		Order("created_at DESC").
 		Limit(limit)
@@ -278,6 +315,7 @@ func GetPosts(c *gin.Context) {
 			},
 			LikesCount: likesCount,
 			LikedByMe:  liked,
+			Tags: post.Tags,
 			CreatedAt:  post.CreatedAt,
 		})
 	}

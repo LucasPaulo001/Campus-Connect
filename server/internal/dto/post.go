@@ -1,13 +1,18 @@
 package dto
 
-import "time"
+import (
+	"time"
+
+	"github.com/LucasPaulo001/Campus-Connect/internal/models"
+)
 
 type PostResponse struct {
-	ID         uint      `json:"id"`
-    Title      string    `json:"title"`
-    Content    string    `json:"content"`
-    User       UserInfo  `json:"user"`
-    LikesCount int64       `json:"likes_count"`
-    LikedByMe  bool      `json:"liked_by_me"`
-    CreatedAt  time.Time `json:"created_at"`
+	ID         uint             `json:"id"`
+    Title      string           `json:"title"`
+    Content    string           `json:"content"`
+    User       UserInfo         `json:"user"`
+    LikesCount int64            `json:"likes_count"`
+    LikedByMe  bool             `json:"liked_by_me"`
+    Tags       []models.Tags    `json:"tags"`
+    CreatedAt  time.Time        `json:"created_at"`
 }
