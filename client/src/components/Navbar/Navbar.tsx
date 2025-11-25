@@ -16,6 +16,7 @@ import { MdUpload } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { AiOutlinePartition } from "react-icons/ai";
 import { useRouter } from "next/navigation";
+import { FaRegBookmark } from "react-icons/fa";
 
 export const Navbar = () => {
   const router = useRouter();
@@ -47,10 +48,15 @@ export const Navbar = () => {
       icon: <Settings />,
       onClick: () => router.push("/settings"),
     },
-     {
+    {
       item: "Minhas postagens",
       icon: <MdUpload />,
       onClick: () => router.push("my-posts"),
+    },
+    {
+      item: "Postagens Salvas",
+      icon: <FaRegBookmark />,
+      onClick: () => router.push("posts-saved"),
     }
   ];
 
@@ -71,6 +77,11 @@ export const Navbar = () => {
       icon: <MdUpload />,
       onClick: () => router.push("my-posts"),
     },
+    {
+      item: "Postagens Salvas",
+      icon: <FaRegBookmark />,
+      onClick: () => router.push("posts-saved"),
+    }
   ];
 
   const [shrunk, setShrunk] = useState(false);

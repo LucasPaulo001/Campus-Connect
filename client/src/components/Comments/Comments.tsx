@@ -1,11 +1,7 @@
 "use client";
 
-import * as React from "react";
-
 import { FiSend } from "react-icons/fi";
-import { BsThreeDots } from "react-icons/bs";
 import { GrSend } from "react-icons/gr";
-
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,25 +15,37 @@ import { FaRegCommentDots } from "react-icons/fa";
 import { useActionContext } from "@/contexts/ActionsContext";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Spinner } from "../ui/spinner";
-import { createComents } from "@/api/posts";
+import { createComents, likeComment } from "@/api/posts";
 import { convertDate } from "@/services/formateDate";
 import { PostTools } from "../PostTools/PostTools";
+import { BiLike } from "react-icons/bi";
+import { User2Icon } from "lucide-react";
+import { Responses } from "./Responses/Responses";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { useState } from "react";
+import { FormResponse } from "./FormResponse/FormResponse";
+import { LiaCommentsSolid } from "react-icons/lia";
+
 
 interface ICommentsProps {
   post_id: number;
 }
 
 export function Comments({ post_id }: ICommentsProps) {
-  const [text, setText] = React.useState("");
-  const [open, setOpen] = React.useState(false);
-  const [loadingComments, setLoadingComments] = React.useState<boolean>(false);
-  const [sending, setSending] = React.useState<boolean>(false);
+  const [text, setText] = useState("");
+  const [open, setOpen] = useState(false);
+  const [loadingComments, setLoadingComments] = useState<boolean>(false);
+  const [sending, setSending] = useState<boolean>(false);
+
+  const [openSendId, setOpenSendId] = useState<number | null>(null);
+  const [openRespId, setOpenRespId] = useState<number | null>(null);
 
   const { listComments, comment } = useActionContext();
   const { token } = useAuthContext();
 
   const { user } = useAuthContext();
 
+  // Criar comentário
   const handleSend = async () => {
     setSending(true);
     try {
@@ -50,6 +58,22 @@ export function Comments({ post_id }: ICommentsProps) {
     } finally {
       setSending(false);
     }
+  };
+
+  // Dar like nos comentários
+  const handleLike = async (comment_id: number) => {
+    const data = await likeComment(user?.id, comment_id, token);
+    console.log(data);
+  };
+
+  // Abrir respostas
+  const handleOpenResps = (comment_id: number) => {
+    setOpenRespId(openRespId === comment_id ? null : comment_id);
+  };
+
+  // Abrir Input para responder o comentário
+  const handleOpenSend = (comment_id: number) => {
+    setOpenSendId(openSendId === comment_id ? null : comment_id);
   };
 
   return (
@@ -74,8 +98,9 @@ export function Comments({ post_id }: ICommentsProps) {
       <DrawerContent className="p-0">
         {/* Header */}
         <DrawerHeader className="border-b">
-          <DrawerTitle className="text-lg font-semibold">
+          <DrawerTitle className="text-lg flex gap-1.5 justify-center items-center font-semibold">
             Comentários
+            <LiaCommentsSolid className="size-6" />
           </DrawerTitle>
         </DrawerHeader>
 
@@ -95,14 +120,81 @@ export function Comments({ post_id }: ICommentsProps) {
               )}
 
               {comment?.map((c, index) => (
-                <div key={`${c.ID}-${index}`} className="p-3 rounded-lg bg-secondary">
+                <div
+                  key={`${c.ID}-${index}`}
+                  className="p-3 rounded-lg bg-secondary"
+                >
                   <span className="flex justify-between">
-                    <p className="text-sm font-semibold">
-                      {c.User.name} - {convertDate(c.created_at)}
-                    </p>
-                    {c.User.id === user?.id && <PostTools ID={c.ID} type="editComment" content={c.content} post_id={post_id} />}
+                    <div className="flex py-3 items-center gap-2">
+                      <User2Icon className="size-6 md:size-8" />
+                      <div className="text-sm flex flex-col font-semibold">
+                        <span>{c.User.name}</span>
+                        <span className="font-light">
+                          {convertDate(c.created_at)}
+                        </span>
+                      </div>
+                    </div>
+                    {c.User.id === user?.id && (
+                      <PostTools
+                        ID={c.ID}
+                        type="editComment"
+                        content={c.content}
+                        post_id={post_id}
+                      />
+                    )}
                   </span>
                   <p className="text-sm">{c.content}</p>
+
+                  {/* Botões de (like, responder e respostas) */}
+                  <div className="mt-5 flex flex-col md:flex-row items-start md:items-center">
+                    <div className="flex">
+                      <Button
+                        variant={"ghost"}
+                        className="cursor-pointer"
+                        onClick={() => handleLike(c.ID)}
+                      >
+                        <BiLike className="size-6" />
+                      </Button>
+                      <Button
+                        variant={"ghost"}
+                        className="cursor-pointer"
+                        onClick={() => handleOpenSend(c.ID)}
+                      >
+                        {openSendId === c.ID ? (
+                          <span>Cancelar</span>
+                        ) : (
+                          <span>Responder</span>
+                        )}
+                      </Button>
+                    </div>
+
+                    {/* Input para responder comentário */}
+                    {openSendId === c.ID && (
+                      <FormResponse
+                        openSend={openSendId}
+                        setOpenSend={setOpenSendId}
+                        comment={c}
+                      />
+                    )}
+                  </div>
+
+                  {/* Respostas */}
+                  <hr />
+                  <Button
+                    variant={"ghost"}
+                    className="px-4 mt-3 flex cursor-pointer hover:bg-blue-500 hover:text-white"
+                    onClick={() => handleOpenResps(c.ID)}
+                  >
+                    <span className="flex items-center gap-2">
+                      Respostas
+                      {openRespId === c.ID ? (
+                        <IoIosArrowUp />
+                      ) : (
+                        <IoIosArrowDown />
+                      )}
+                    </span>
+                  </Button>
+                  <Responses openResps={openRespId} comment_id={c.ID} />
                 </div>
               ))}
             </>
@@ -123,14 +215,7 @@ export function Comments({ post_id }: ICommentsProps) {
             onClick={handleSend}
             disabled={sending}
           >
-            {
-              sending ? (
-                <GrSend />
-              ) : (
-                <FiSend className="size-5" />
-              )
-            }
-
+            {sending ? <GrSend /> : <FiSend className="size-5" />}
           </Button>
         </div>
       </DrawerContent>

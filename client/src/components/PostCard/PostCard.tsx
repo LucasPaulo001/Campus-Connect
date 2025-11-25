@@ -9,6 +9,9 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { Comments } from "../Comments/Comments";
 import { convertDate } from "@/services/formateDate";
 import { PostTools } from "../PostTools/PostTools";
+import { FaRegBookmark } from "react-icons/fa";
+import { User2Icon } from "lucide-react";
+
 
 interface IPostCardProps {
   title: string;
@@ -58,10 +61,17 @@ export const PostCard = ({
   }, [liked_by_me]);
 
   return (
-    <div className="bg-white mx-3 w-[90%] md:w-[80%] border rounded-xl shadow-sm p-4 space-y-4">
+    <div className="bg-white mx-3 w-[90%] md:w-[80%] border rounded-xl shadow-sm p-2 space-y-4">
       <div className="flex justify-between items-center">
-        <span className="font-bold text-[15px] md:text-2xl">
-          {author.name} - {author.role} - {date}
+        <span className="font-bold text-[15px] flex items-center md:p-4 gap-10 justify-between md:gap-5 md:text-2xl">
+          <User2Icon className="size-8" />
+          <div>
+            {author.name}
+            <div className="flex gap-3">
+              <span className="font-light text-[16px]">[{author.role}]</span>
+              <span className="font-light text-[16px]">{date}</span>
+            </div>
+          </div>
         </span>
         {user?.id === author?.id && (
           <span>
@@ -93,12 +103,14 @@ export const PostCard = ({
             ) : (
               <BiLike className="size-6" />
             )}
-            <span>{like ? "Curtido" : "Curtir"}</span>
           </Button>
           <span>{likeCounts}</span>
         </div>
         <Button variant={"ghost"} className="cursor-pointer">
           <Comments post_id={postId} />
+        </Button>
+        <Button variant={"ghost"} className="cursor-pointer">
+          <FaRegBookmark />
         </Button>
       </div>
       <hr />

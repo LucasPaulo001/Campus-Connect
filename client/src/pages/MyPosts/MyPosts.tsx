@@ -26,20 +26,23 @@ export const MyPostsPage = () => {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center">
-      {Array.isArray(myPosts) && myPosts?.map((myPost, index) => (
-        <PostCard
-          key={`${myPost.id}_${index}`}
-          title={myPost.title}
-          content={myPost.content}
-          created_at={myPost.created_at}
-          likes_count={myPost.likes_count}
-          author={myPost.user}
-          postId={myPost.id}
-          tagsPost={myPost.tags}
-          liked_by_me={myPost.liked_by_me}
-        />
-      ))}
+    <div className="flex flex-col justify-between items-center">
+      <h1 className="text-2xl my-10">Minhas Postagens</h1>
+      <div>
+        {Array.isArray(myPosts) && myPosts?.map((myPost, index) => (
+          <PostCard
+            key={`${myPost.id}_${index}`}
+            title={myPost.title}
+            content={myPost.content}
+            created_at={myPost.created_at}
+            likes_count={myPost.likes_count}
+            author={myPost.user}
+            postId={myPost.id}
+            tagsPost={myPost.tags}
+            liked_by_me={myPost.liked_by_me}
+          />
+        ))}
+      </div>
     </div>
   );
 };

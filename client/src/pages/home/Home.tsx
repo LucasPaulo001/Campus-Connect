@@ -23,7 +23,7 @@ export const HomePage = () => {
       </div>
 
 
-      <div className="flex flex-col items-center justify-center gap-10 w-screen">
+      <div className="flex flex-col items-center justify-center gap-15 w-screen">
         {loadingAction ? (
           <LoadingPage />
         ) : (

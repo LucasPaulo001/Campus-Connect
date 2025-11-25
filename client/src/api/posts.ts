@@ -168,3 +168,17 @@ export const deleteComment = async (comment_id: number | undefined, token: strin
 
   return res.data
 }
+
+// Dar Like nos comentários
+export const likeComment = async (user_id: number | undefined, comment_id: number | undefined, token: string) => {
+  const res = await axiosInstace.post("/api/comment/like", {
+    user_id,
+    comment_id,
+  }, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data.data;
+};
