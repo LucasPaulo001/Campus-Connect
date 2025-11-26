@@ -26,8 +26,10 @@ func main(){
 	config.DB.AutoMigrate(
 		&models.User{}, 
 		&models.Post{}, 
+		&models.Saved_Posts{},
 		&models.Tags{}, 
 		&models.Comment{},
+		&models.Resp_Comment{},
 		&models.LikePost{},
 		&models.LikeComment{},
 		&models.Group{},

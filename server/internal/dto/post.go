@@ -16,3 +16,13 @@ type PostResponse struct {
     Tags       []models.Tags    `json:"tags"`
     CreatedAt  time.Time        `json:"created_at"`
 }
+
+type CommentResponse struct {
+    ID          uint        `json:"id"`
+    PostId      uint        `json:"post_id"`
+    Content     string      `json:"content"`
+    User        UserInfo    `json:"user"`
+    LikesCount  int64       `json:"likes_count"`
+    LikedByMe   bool        `json:"liked_by_me"`
+    CreatedAt   time.Time   `json:"created_at"`
+}

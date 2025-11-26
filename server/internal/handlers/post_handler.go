@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -10,6 +11,7 @@ import (
 	"github.com/LucasPaulo001/Campus-Connect/internal/models"
 	config "github.com/LucasPaulo001/Campus-Connect/internal/repository"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // Criação de Postagens
@@ -88,7 +90,7 @@ func EditPost(c *gin.Context) {
 		return
 	}
 
-	if post.ID != userId {
+	if post.User.ID != userId {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Permissão de edição negada."})
 		return
 	}
@@ -155,41 +157,15 @@ func DeletePost(c *gin.Context) {
 		return
 	}
 
-	// Iniciar transação
-	tx := config.DB.Begin()
-
-	// Deletar comentários associados
-	if err := tx.Where("post_id = ?", postId).
-		Delete(&models.Comment{}).Error; err != nil {
-		tx.Rollback()
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Erro ao deletar comentários.",
-			"details": err.Error(),
-		})
-		return
-	}
-
-	// Deletar tags relacionadas (pivot)
-	if err := tx.Exec("DELETE FROM post_tags WHERE post_id = ?", postId).Error; err != nil {
-		tx.Rollback()
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Erro ao deletar tags associadas.",
-			"details": err.Error(),
-		})
-		return
-	}
 
 	// Deletar o post
-	if err := tx.Delete(&models.Post{}, postId).Error; err != nil {
-		tx.Rollback()
+	if err := config.DB.Delete(&models.Post{}, postId).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Erro ao deletar postagem.",
 			"details": err.Error(),
 		})
 		return
 	}
-
-	tx.Commit()
 
 	c.JSON(http.StatusOK, gin.H{"message": "Postagem deletada com sucesso."})
 }
@@ -330,6 +306,77 @@ func GetPosts(c *gin.Context) {
 		"has_more": 		len(posts) == limit,
 	})
 
+}
+
+// Salvar postagens
+func Saved_Post(c *gin.Context) {
+	userId := c.GetUint("userId")
+
+	postIdStr := c.Param("id")
+
+	postId, err := strconv.ParseUint(postIdStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Erro ao converter Id de postagem."})
+		return
+	}
+
+	// Buscando usuário
+	var user models.User
+	if err := config.DB.First(&user, userId).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Usuário não encontrado."})
+		return
+	}
+
+	// Verificando se já salvou a postagem
+	var exists models.Saved_Posts
+	err = config.DB.
+		Where("user_id = ? AND post_id = ?", userId, uint(postId)).
+		First(&exists).Error
+
+	if err == nil {
+		config.DB.Delete(&exists)
+		c.JSON(http.StatusOK, gin.H{"message": "Postagem removida dos salvos"})
+		return
+	}
+
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao verificar salvamentos."})
+        return
+	}
+
+	newSaved := models.Saved_Posts{
+		UserID:  	userId,
+		PostID:  	uint(postId),
+	}
+
+	if err := config.DB.Create(&newSaved).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": "Postagem salva com sucesso."})
+}
+
+// Listar postagens salvas
+func ListSavedPosts(c *gin.Context) {
+	userId := c.GetUint("userId")
+
+    var posts []models.Post
+    if err := config.DB.
+		Joins("JOIN saved_posts sp ON sp.post_id = posts.id").
+		Where("sp.user_id = ?", userId).
+		Preload("User").
+		Preload("Likes").
+		Preload("Comments").
+		Preload("Tags").
+		Order("sp.created_at DESC").
+		Find(&posts).Error; err != nil {
+
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar posts salvos.", "details": err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"posts": posts})
 }
 
 
