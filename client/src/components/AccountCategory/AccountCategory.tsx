@@ -1,4 +1,4 @@
-import { BecomeTeacher } from "@/api/user";
+import { BecomeStudent, BecomeTeacher } from "@/api/user";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,6 +26,8 @@ interface IAccountCategoryProps {
 export function AccountCategory({ src, textButton }: IAccountCategoryProps) {
   const [formation, setFormation] = useState<string>("");
   const [departament, setDepartament] = useState<string>("");
+  const [course, setCourse] = useState<string>("");
+  const [registration, setRegistration] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
   const { token } = useAuthContext();
@@ -34,18 +36,32 @@ export function AccountCategory({ src, textButton }: IAccountCategoryProps) {
     e.preventDefault();
     setLoading(true);
     try {
-      if (!formation || !departament) {
-        toast.info("Por favor, preencha todos os campos.");
-        return;
+      if (textButton === "Professor") {
+        if (!formation || !departament) {
+          toast.info("Por favor, preencha todos os campos.");
+          return;
+        }
+        const data = await BecomeTeacher(token, formation, departament);
+        console.log(data);
+        toast.success(data.message);
+        setDepartament("");
+        setFormation("");
       }
-      const data = await BecomeTeacher(token, formation, departament);
-      console.log(data);
-      toast.success(data.message);
-    }
-    catch(err: any){
-        toast.error(err.response.data.error)
-    } 
-    finally {
+
+      else if (textButton === "Estudante"){
+        if (!course) {
+          toast.info("Por favor, preencha todos os campos.");
+          return;
+        }
+        const data = await BecomeStudent(token, course, registration);
+        console.log(data);
+        toast.success(data.message);
+        setCourse("");
+        setRegistration("");
+      }
+    } catch (err: any) {
+      toast.error(err.response.data.error);
+    } finally {
       setLoading(false);
     }
   };
@@ -111,9 +127,23 @@ export function AccountCategory({ src, textButton }: IAccountCategoryProps) {
 
             {textButton === "Estudante" && (
               <>
+              <div className="grid gap-3">
+                  <Label htmlFor="matricula">Matrícula</Label>
+                  <Input 
+                    id="matricula" 
+                    placeholder="Sua matrícula de instituição..." 
+                    value={registration}
+                    onChange={(e) => setRegistration(e.target.value)}
+                  />
+                </div>
                 <div className="grid gap-3">
                   <Label htmlFor="course">Curso</Label>
-                  <Input id="course" placeholder="Curso que frequenta..." />
+                  <Input 
+                    id="course" 
+                    placeholder="Curso que frequenta..." 
+                    value={course}
+                    onChange={(e) => setCourse(e.target.value)}
+                  />
                 </div>
               </>
             )}

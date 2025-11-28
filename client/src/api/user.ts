@@ -41,3 +41,19 @@ export const BecomeTeacher = async (token: string, formation: string, departamen
   return res.data;
 }
 
+// Solicitar categoria de aluno
+export const BecomeStudent = async (token: string, course: string, matricula: string) => {
+  const res = await axiosInstace.post("/api/become/student", 
+    {
+      course,
+      matricula
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  return res.data;
+}
