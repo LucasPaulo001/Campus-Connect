@@ -23,3 +23,21 @@ export const EditData = async (
 
   return res.data;
 };
+
+// Solicitar categoria de professor
+export const BecomeTeacher = async (token: string, formation: string, departament: string) => {
+  const res = await axiosInstace.post("/api/become/teacher", 
+    {
+      formation,
+      departament
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  return res.data;
+}
+

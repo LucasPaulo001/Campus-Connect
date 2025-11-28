@@ -4,6 +4,7 @@ export interface IUser {
   name_user: string;
   email: string;
   role: string;
+  bio: string;
 }
 
 interface Like {
@@ -40,8 +41,8 @@ export interface IComment {
 }
 
 export interface IResponsesComment {
-  ID: number;
-  User: IUser;
+  id: number;
+  user: IUser;
   comment_id: number;
   content: string;
   created_at: string;

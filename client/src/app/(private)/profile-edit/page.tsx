@@ -1,6 +1,7 @@
 "use client";
 
 import { EditData } from "@/api/user";
+import { AccountCategory } from "@/components/AccountCategory/AccountCategory";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -99,43 +100,11 @@ export default function ProfileEdit() {
           <div className="py-2">
             <h2 className="text-2xl">Mudar categoria de conta</h2>
             <div className="flex flex-col gap-3.5 md:flex-row items-center justify-between">
-              <div className="my-5 p-4
-                flex flex-col items-center justify-center
-                cursor-pointer
-                bg-white
-                border-2 border-transparent 
-                rounded-lg
-                shadow-lg
-                hover:border-blue-500 hover:shadow-xl hover:scale-[1.02]
-                transition-all duration-300
-                w-full max-w-xs sm:w-60"
-              >
-                <Image 
-                  src={"/select_teacher.svg"}
-                  alt="imagem para selecionar professor"
-                  width={200}
-                  height={200}
-                />
-                <span>Professor</span>
+              <div>
+                <AccountCategory src="/select_teacher.svg" textButton="Professor" />
               </div>
-              <div className="my-5 p-4
-                flex flex-col items-center justify-center
-                cursor-pointer
-                bg-white
-                border-2 border-transparent 
-                rounded-lg
-                shadow-lg
-                hover:border-blue-500 hover:shadow-xl hover:scale-[1.02]
-                transition-all duration-300
-                w-full max-w-xs sm:w-60"
-              >
-                <Image 
-                  src={"/student.png"}
-                  alt="imagem para selecionar estudante"
-                  width={200}
-                  height={200}
-                />
-                <span>Estudante</span>
+              <div>
+                <AccountCategory src="/student.png" textButton="Estudante" />
               </div>
             </div>
           </div>

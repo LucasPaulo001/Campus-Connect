@@ -25,6 +25,7 @@ export const FormResponse = ({ comment }: IFormResProps) => {
         setLoading(true);
         try{
             await responseComment(comment.id, content, token);
+            setContent("");
         }
         finally{
             setLoading(false);

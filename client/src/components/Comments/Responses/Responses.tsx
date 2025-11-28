@@ -37,6 +37,7 @@ export const Responses = ({
     try {
       const data = await loadResponses(comment_id, token);
       setResponses(data.data);
+      console.log(data.data)
     } finally {
       setLoading(false);
     }
@@ -60,20 +61,20 @@ export const Responses = ({
           <span className="flex justify-center items-center">Nenhuma resposta...</span>
         ) : (
           responses?.map((resp) => (
-          <div key={resp.ID} className="p-3 rounded-lg bg-blue-100 ml-1.5">
+          <div key={resp.id} className="p-3 rounded-lg bg-blue-100 ml-1.5">
             <span className="flex justify-between">
               <div className="flex py-3 items-center gap-2">
                 <User2Icon className="size-6 md:size-8" />
                 <div className="text-sm flex flex-col font-semibold">
-                  <span>{resp.User.name}</span>
-                  <span className="font-light">
+                  <span>{resp.user.name}</span>
+                  {/* <span className="font-light">
                     {convertDate(resp.created_at)}
-                  </span>
+                  </span> */}
                 </div>
               </div>
-              {resp.User.id === user?.id && (
+              {resp.user.id === user?.id && (
                 <PostTools
-                  ID={resp.ID}
+                  ID={resp.id}
                   type="editResponse"
                   content={resp.content}
                   commentId={comment_id}

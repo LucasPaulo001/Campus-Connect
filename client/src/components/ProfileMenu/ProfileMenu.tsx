@@ -70,6 +70,7 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
                   {user?.role}
                 </span>
                 <hr />
+                <span className="mt-3"><strong>Biografia:</strong> {user?.bio}</span>
               </>
             )}
           </div>
