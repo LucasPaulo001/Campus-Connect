@@ -53,3 +53,10 @@ export interface IResponsesComment {
   content: string;
   created_at: string;
 }
+
+export interface IStudent {
+  id: number;
+  name: string;
+  bio: string;
+  role: string;
+}
