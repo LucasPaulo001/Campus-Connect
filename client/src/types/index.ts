@@ -55,8 +55,8 @@ export interface IResponsesComment {
 }
 
 export interface IStudent {
-  id: number;
-  name: string;
-  bio: string;
-  role: string;
+  UserID: number;
+  User: IUser;
+  course: string;
+  matricula: string;
 }

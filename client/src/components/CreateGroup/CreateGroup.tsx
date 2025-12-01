@@ -1,47 +1,53 @@
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  CardFooter
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
-import { DialogType } from "@/types"
-import { useState } from "react"
-import { Textarea } from "../ui/textarea"
-import { ArrowBigRight } from "lucide-react"
-import { Spinner } from "../ui/spinner"
+  CardFooter,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DialogType, IStudent } from "@/types";
+import { useEffect, useState } from "react";
+import { Textarea } from "../ui/textarea";
+import { ArrowBigRight } from "lucide-react";
+import { Spinner } from "../ui/spinner";
+import { FormSearch } from "./FormSearch/FormSearch";
+import { CreateNewGroup } from "@/api/groups";
+import { useActionContext } from "@/contexts/ActionsContext";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 interface ICreateGroupProps {
   type?: DialogType;
 }
 
 export const CreateGroup = ({ type }: ICreateGroupProps) => {
-
-  const [titlePostagem, setTitlePost] = useState("");
+  const [name, setName] = useState("");
   const [value, setValue] = useState("");
 
   // mantém os alunos selecionados
-  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [selectedStudents, setSelectedStudents] = useState<IStudent[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const { token } = useAuthContext();
 
   const handleCreateGroup = async () => {
-    const body = {
-      name: titlePostagem,
-      description: value,
-      members: selectedStudents.map((s: any) => s.id),
-    };
+    setLoading(true);
+    try {
+      const members = selectedStudents.map((s: IStudent) => s.UserID);
 
-    console.log("Enviando:", body);
+      const data = await CreateNewGroup(name, value, members, token);
 
+      console.log(data);
+      setName("");
+      setValue("");
+      setSelectedStudents([]);
+      toast.success("Turma criada com sucesso.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -52,7 +58,7 @@ export const CreateGroup = ({ type }: ICreateGroupProps) => {
           <TabsTrigger value="participants">Participantes</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="info">
+        <TabsContent value="info" className="w-full">
           <Card>
             <CardHeader>
               <CardTitle>Dados da turma</CardTitle>
@@ -63,8 +69,8 @@ export const CreateGroup = ({ type }: ICreateGroupProps) => {
                 <Label>Título*</Label>
                 <Input
                   placeholder="Nome da turma"
-                  value={titlePostagem}
-                  onChange={(e) => setTitlePost(e.target.value)}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                 />
               </div>
 
@@ -93,14 +99,17 @@ export const CreateGroup = ({ type }: ICreateGroupProps) => {
             </CardHeader>
 
             <CardContent>
-              
+              <FormSearch
+                selectedStudents={selectedStudents}
+                setSelectedStudents={setSelectedStudents}
+              />
             </CardContent>
 
             <CardFooter>
-               <Button
+              <Button
                 className="cursor-pointer bg-blue-600 hover:bg-blue-700"
                 type="submit"
-                onClick={() => alert("criando grupo")}
+                onClick={() => handleCreateGroup()}
                 disabled={loading}
               >
                 {loading ? (
@@ -117,5 +126,5 @@ export const CreateGroup = ({ type }: ICreateGroupProps) => {
         </TabsContent>
       </Tabs>
     </div>
-  )
-}
+  );
+};
