@@ -1,3 +1,4 @@
+import { ParamValue } from "next/dist/server/request/params";
 import axiosInstace from "./axiosInstance";
 
 // Listagem de grupos criados pelo professor
@@ -45,3 +46,16 @@ export const CreateNewGroup = async (
 
   return res.data;
 };
+
+// Detalhes de um grupo
+export const LoadGroup = async (token: string, group_id: number | ParamValue) => {
+  const res = await axiosInstace.get(`/api/group/${group_id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  return res.data;
+}
