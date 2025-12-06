@@ -62,7 +62,6 @@ export interface IStudent {
 }
 
 // Grupos
-
 type Teacher = {
   departament: string;
   formation: string;
@@ -89,4 +88,15 @@ export interface IGroup {
   teacher: Teacher;
   user: IUser;
   members: Members[];
+}
+
+export interface IChallenge {
+  id: number;
+  title: string;
+  description: string;
+  teacher: Teacher;
+  type: string;
+  xp: number;
+  group_id: number;
+  teacher_id: number;
 }

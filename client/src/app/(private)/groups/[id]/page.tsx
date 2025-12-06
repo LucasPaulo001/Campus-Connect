@@ -9,13 +9,16 @@ import { IGroup } from "@/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PiChalkboardTeacherThin } from "react-icons/pi";
 import { PiStudent } from "react-icons/pi";
+import { Post } from "@/components/groups/Post/Post";
+import { ModalPosts } from "@/components/groups/modal/Modal";
+import { SettingsGroups } from "@/components/groups/settings/Settings";
 
 export default function GroupDetail() {
   const [group, setGroup] = useState<IGroup | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const { id } = useParams();
-  const { token } = useAuthContext();
+  const { token, user } = useAuthContext();
 
   const group_id = id;
 
@@ -25,8 +28,6 @@ export default function GroupDetail() {
       if (!id) return;
       const data = await LoadGroup(token, group_id);
       setGroup(data.group);
-      console.log(data);
-      console.log(group);
     } finally {
       setLoading(false);
     }
@@ -49,12 +50,21 @@ export default function GroupDetail() {
           <TabsList>
             <TabsTrigger value="posts">Postagens</TabsTrigger>
             <TabsTrigger value="students">Participantes</TabsTrigger>
-            <TabsTrigger value="settings">Configurações</TabsTrigger>
+            {user?.role === "professor" && (
+              <TabsTrigger value="settings">Configurações</TabsTrigger>
+            )}
           </TabsList>
 
-          <TabsContent value="posts">
+          <TabsContent className="my-10" value="posts">
             <div>
-              <h1>Postagens</h1>
+              <span className="flex justify-between items-center">
+                <h1>Atividades da turma</h1>
+                {user?.role === "professor" && (
+                  <ModalPosts group_id={Number(group_id)} />
+                )}
+              </span>
+              <hr className="my-5" />
+              <Post group_id={Number(group_id)} />
             </div>
           </TabsContent>
 
@@ -76,20 +86,25 @@ export default function GroupDetail() {
               </div>
               <hr className="my-3" />
               {group?.members.map((m) => (
-               
-                  <div key={m.id}>
-                      <div className="flex items-center gap-1.5">
-                        <PiStudent />
-                        <span>{m.student.name}</span>
-                      </div>
-                      <hr className="my-3" />
+                <div key={m.id}>
+                  <div className="flex items-center gap-1.5">
+                    <PiStudent />
+                    <span>{m.student.name}</span>
                   </div>
-            
+                  <hr className="my-3" />
+                </div>
               ))}
             </div>
           </TabsContent>
 
-          <TabsContent value="settings">Configurações</TabsContent>
+          {user?.role === "professor" && (
+            <TabsContent value="settings">
+              <SettingsGroups
+                title={group?.nome}
+                description={group?.Description}
+              />
+            </TabsContent>
+          )}
         </Tabs>
       </div>
     </div>
