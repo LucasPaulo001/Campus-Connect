@@ -1,4 +1,5 @@
 import { CreateChallenge } from "@/api/groups";
+import { MarkdownEditor } from "@/components/MdEditor/MdEditor";
 import { Selects } from "@/components/Select/Select";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +20,12 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
+import dynamic from "next/dynamic";
+
+const Markdown = dynamic(() => import("@uiw/react-md-editor").then(mod => mod.default.Markdown), {
+  ssr: false
+});
+
 interface IModalPostsProps {
   group_id?: number | undefined;
   titleChallenge?: string;
@@ -37,7 +44,7 @@ export function ModalPosts({
   author,
 }: IModalPostsProps) {
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState<string | undefined>("");
   const [type, setType] = useState("");
   const [xp, setXp] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -110,7 +117,7 @@ export function ModalPosts({
               <div>
                 <span>Descrição: </span>
                 <div className="border my-2.5 flex rounded-2xl p-5">
-                  {descriptionChallenge}
+                  <Markdown source={descriptionChallenge} style={{ whiteSpace: "pre-wrap", backgroundColor: "transparent" }} />
                 </div>
               </div>
               <span
@@ -149,12 +156,11 @@ export function ModalPosts({
               </div>
 
               <div className="grid gap-3">
-                <Label htmlFor="conteudo">Conteúdo</Label>
-                <Textarea
-                  id="conteudo"
-                  placeholder="Fale mais sobre..."
+                <MarkdownEditor
+                  setValue={setDescription}
+                  textAreaName="description"
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  labelText="Conteúdo"
                 />
               </div>
 
