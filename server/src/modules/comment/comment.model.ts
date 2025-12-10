@@ -1,15 +1,10 @@
 import mongoose, { Schema } from "mongoose";
-import { TPost } from "../../types/post/post.type.js";
+import { TComment } from "../../types/comment/comment.type.js";
 
-const PostSchema = new mongoose.Schema<TPost>({
+const CommentSchema = new mongoose.Schema<TComment>({
     author: {
         type: Schema.Types.ObjectId,
-        ref: "Teacher",
-        required: true
-    },
-
-    title: {
-        type: String,
+        ref: "User",
         required: true
     },
 
@@ -18,14 +13,10 @@ const PostSchema = new mongoose.Schema<TPost>({
         required: true
     },
 
-    comments: {
+    post: {
         type: Schema.Types.ObjectId,
-        ref: "Comment"
+        ref: "Post"
     },
-
-    tags: [{
-        type: String
-    }],
 
     likes: [{
         type: Schema.Types.ObjectId,
@@ -36,6 +27,7 @@ const PostSchema = new mongoose.Schema<TPost>({
         type: Date,
         default: Date.now
     }
+
 });
 
-export default mongoose.model("Post", PostSchema);
+export default mongoose.model("Comment", CommentSchema);

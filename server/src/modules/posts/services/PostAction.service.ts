@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import { UserRepository } from "../../users/user.repository.js";
 import { TeacherRepository } from "../../teacher/teacher.repository.js";
 import { PostRepository } from "../post.repository.js";
+import { ToggleLike } from "../../../services/Like.service.js";
 
 export type TCreatePostData = {
   title: string;
@@ -96,6 +97,8 @@ export async function SavePostService(postId: string, userId: string) {
     );
   }
 
+  const savedByMy = user.postsSaveds?.some(id => id.equals(postId));
+
   await user.save();
 
   return {
@@ -103,6 +106,7 @@ export async function SavePostService(postId: string, userId: string) {
       ? "Postagem removida dos salvos"
       : "Postagem salva com sucesso.",
     post: post,
+    saved: savedByMy
   };
 }
 
@@ -150,31 +154,11 @@ export async function EditPostService(
 
 // Curtir postagens
 export async function LikePostService(postId: string, userId: string) {
-  const post = await PostRepository.findById(postId);
-
-  if (!post) {
-    throw new Error("Postagem não encontrada.");
-  }
-
-  const user = await UserRepository.findById(userId);
-
-  if (!user) {
-    throw new Error("Usuário não encontrado.");
-  }
-
-  const userIdObject = new Types.ObjectId(user._id);
-
-  const existsLike = post.likes?.some((userId) => userId.equals(userIdObject));
-
-  if (!existsLike) {
-    post.likes?.push(userIdObject);
-  } else {
-    post.likes = post.likes?.filter((userId) => !userId.equals(userId));
-  }
-
-  await post.save();
-
-  return {
-    msg: existsLike ? "Like removido" : "Like adicionado"
-  }
+  return ToggleLike({
+    userId,
+    entityName: "Postagem",
+    entityId: postId,
+    entityRepository: PostRepository,
+    userRepository: UserRepository,
+  });
 }

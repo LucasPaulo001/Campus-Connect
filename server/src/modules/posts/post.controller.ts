@@ -12,9 +12,9 @@ export async function CreatePostController(req: CustomRequest, res: Response) {
 
         const { title, content, tags } = req.body;
 
-        const result = CreatePostService({ title, content, tags, author });
+        const result = await CreatePostService({ title, content, tags, author });
 
-        res.status(201).json({mst: (await result).post, post: (await result).msg});
+        res.status(201).json({msg: result.post, post: result.msg});
 
     }
     catch(err: any){
@@ -76,7 +76,7 @@ export async function SavePostController(req: CustomRequest, res: Response) {
 
         const result = await SavePostService(postId, userId);
 
-        res.status(201).json({msg: (await result).msg, post: (await result).post});
+        res.status(201).json({msg: result.msg, post: result.post, saved: result.saved});
     }
     catch(err: any){
         res.status(500).json({error: "Erro interno do servidor.", err: err.message});
@@ -90,7 +90,7 @@ export async function ListSavePostsController(req: CustomRequest, res: Response)
 
         const result = await ListSavePostsService(userId);
 
-        res.status(201).json({post: (await result).posts});
+        res.status(201).json({post: result.posts});
     }
     catch(err: any){
         res.status(500).json({error: "Erro interno do servidor.", err: err.message});
@@ -104,7 +104,7 @@ export async function ListPostByTeacherController(req: CustomRequest, res: Respo
 
         const result = await ListPostByTeacherService(teacherId);
 
-        res.status(201).json({post: (await result).posts});
+        res.status(201).json({post: result.posts});
     }
     catch(err: any){
         res.status(500).json({error: "Erro interno do servidor.", err: err.message});
@@ -138,9 +138,9 @@ export async function LikePostController(req: CustomRequest, res: Response){
 
         const postId = req.params.id;
 
-        const result = LikePostService(postId, userId);
+        const result = await LikePostService(postId, userId);
 
-        res.status(201).json({msg: (await result).msg});
+        res.status(201).json({msg: result.msg, liked: result.liked});
 
     }
     catch(err: any){
