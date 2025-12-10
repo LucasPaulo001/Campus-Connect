@@ -37,7 +37,7 @@ const PostTools = dynamic(
 
 
 interface ICommentsProps {
-  post_id: number;
+  post_id: string;
 }
 
 export function Comments({ post_id }: ICommentsProps) {
@@ -46,8 +46,8 @@ export function Comments({ post_id }: ICommentsProps) {
   const [loadingComments, setLoadingComments] = useState<boolean>(false);
   const [sending, setSending] = useState<boolean>(false);
 
-  const [openSendId, setOpenSendId] = useState<number | null>(null);
-  const [openRespId, setOpenRespId] = useState<number | null>(null);
+  const [openSendId, setOpenSendId] = useState<string | null>(null);
+  const [openRespId, setOpenRespId] = useState<string | null>(null);
   const [loadResps, setLoadResp] = useState<boolean>(false);
 
   const { listComments, comment } = useActionContext();
@@ -71,18 +71,18 @@ export function Comments({ post_id }: ICommentsProps) {
   };
 
   // Dar like nos comentários
-  const handleLike = async (comment_id: number) => {
+  const handleLike = async (comment_id: string) => {
     const data = await likeComment(user?.id, comment_id, token);
     console.log(data);
   };
 
   // Abrir respostas
-  const handleOpenResps = (comment_id: number) => {
+  const handleOpenResps = (comment_id: string) => {
     setOpenRespId(openRespId === comment_id ? null : comment_id);
   };
 
   // Abrir Input para responder o comentário
-  const handleOpenSend = (comment_id: number) => {
+  const handleOpenSend = (comment_id: string) => {
     setOpenSendId(openSendId === comment_id ? null : comment_id);
   };
 
@@ -138,15 +138,15 @@ export function Comments({ post_id }: ICommentsProps) {
                     <div className="flex py-3 items-center gap-2">
                       <User2Icon className="size-6 md:size-8" />
                       <div className="text-sm flex flex-col font-semibold">
-                        <span>{c.user.name}</span>
+                        <span>{c.author.name}</span>
                         <span className="font-light">
-                          {convertDate(c.created_at)}
+                          {convertDate(c.createdAt)}
                         </span>
                       </div>
                     </div>
-                    {c.user.id === user?.id && (
+                    {c.author.id === user?.id && (
                       <PostTools
-                        ID={c.id}
+                        id={c.id}
                         type="editComment"
                         content={c.content}
                         post_id={post_id}
@@ -208,7 +208,7 @@ export function Comments({ post_id }: ICommentsProps) {
                   </Button>
                   {
                     openRespId === c.id && (
-                      <Responses loadReps={loadResps} openResps={openRespId} comment_id={c.id} />
+                      <Responses loadReps={loadResps} openResps={openRespId} comment={c.id} />
                     )
                   }
                   

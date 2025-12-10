@@ -10,15 +10,15 @@ interface IActionsContext {
     listPosts: (token: string) => Promise<any>
     loadingAction: boolean
     posts: IPost[] | null
-    likeInPost: (user_id: number | undefined, post_id: number, token: string) => Promise<void>
-    listComments: (post_id: number | undefined, token: string) => Promise<IComment[] | null>
-    unlikePost: (user_id: number | undefined, post_id: number, token: string) => Promise<void>
+    likeInPost: (post_id: string, token: string) => Promise<void>
+    listComments: (post_id: string | undefined, token: string) => Promise<IComment[] | null>
+    unlikePost: (user_id: string | undefined, post_id: string, token: string) => Promise<void>
     comment: IComment[] | null
     listMyPosts: (token: string) => Promise<any>
     myPosts: IPost[] | null
     postSaved: IPost[] | null
     listSavedPosts: (token: string) => Promise<void>
-    listChallenges: (token: string, group_id: number) => Promise<any>
+    listChallenges: (token: string, group_id: string) => Promise<any>
     challenge: IChallenge[] | null
 }
 
@@ -39,7 +39,7 @@ export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             const res = await loadPosts(token);
             console.log(res);
-            setPosts(res.data);
+            setPosts(res);
         }
         catch (err: any) {
             console.log(err);
@@ -69,8 +69,8 @@ export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
     const listSavedPosts = async (token: string) => {
         try{
             const data = await GetSavedPosts(token);
-            console.log(data);
-            setPostSaved(data.posts);
+            console.log(data.post);
+            setPostSaved(data.post);
         }
         catch(err: any){
             console.log(err);
@@ -78,9 +78,9 @@ export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     // Like nos posts
-    const likeInPost = async (user_id: number | undefined, post_id: number, token: string) => {
+    const likeInPost = async (post_id: string, token: string) => {
         try {
-            await likePosts(user_id, post_id, token);
+            await likePosts(post_id, token);
             // atualiza o estado global
             setPosts(prev =>
                 prev?.map(post =>
@@ -88,7 +88,7 @@ export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
                         ? {
                             ...post,
                             liked_by_me: true,
-                            likes_count: post.likes_count + 1
+                            likes_count: post.likes + 1
                         }
                         : post
                 ) || null
@@ -101,7 +101,7 @@ export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     // Retirar like
-    const unlikePost = async (user_id: number | undefined, post_id: number, token: string) => {
+    const unlikePost = async (user_id: string | undefined, post_id: string, token: string) => {
         try {
             await removeLikePost(user_id, post_id, token);
             setPosts(prev =>
@@ -110,7 +110,7 @@ export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
                         ? {
                             ...post,
                             liked_by_me: false,
-                            likes_count: post.likes_count - 1
+                            likes_count: post.likes - 1
                         }
                         : post
                 ) || null
@@ -122,15 +122,15 @@ export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     // Listagem de comentários de um post
-    const listComments = async (post_id: number | undefined, token: string) => {
+    const listComments = async (post_id: string | undefined, token: string) => {
         try {
             const res = await loadComments(post_id, token);
 
             console.log(res);
 
-            setComments(res)
+            setComments(res.msg)
 
-            return res;
+            return res.msg;
         }
         catch (err: any) {
             console.log(err)
@@ -138,7 +138,7 @@ export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     // Listagem de desafios dos grupos
-    const listChallenges = async (token: string, group_id: number) => {
+    const listChallenges = async (token: string, group_id: string) => {
         try{
             const res = await LoadChallenges(token, group_id);
             console.log(res);

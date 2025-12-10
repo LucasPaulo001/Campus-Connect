@@ -89,7 +89,7 @@ export const CreateChallenge = async (
 };
 
 // Listar desafios
-export const LoadChallenges = async (token: string, group_id: number) => {
+export const LoadChallenges = async (token: string, group_id: string) => {
   const res = await axiosInstace.get(`/api/group/${group_id}/challenge`, {
     headers: {
       Authorization: `Bearer ${token}`,

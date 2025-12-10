@@ -20,17 +20,16 @@ export default function PostsSaved() {
       {postSaved?.length == 0 || postSaved === null ? (
         <NotFound text="Nenhuma postagem salva..." />
       ) : (
-        postSaved?.map((post, index) => (
+        postSaved?.map((post) => (
           <PostCard
-            key={index}
+            key={post.id}
             title={post.title}
             content={post.content}
-            created_at={post.created_at}
-            likes_count={post.likes_count}
-            author={post.user}
+            created_at={post.createdAt}
+            likes_count={post.likes}
+            author={post.author}
             postId={post.id}
-            tagsPost={post.tags}
-            liked_by_me={post.liked_by_me}
+            liked_by_me={false}
           />
         ))
       )}

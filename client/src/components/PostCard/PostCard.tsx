@@ -1,6 +1,6 @@
 "use client";
 
-import { ITag, IUser } from "@/types";
+import { IUser } from "@/types";
 import { useEffect, useState } from "react";
 import { BiLike, BiSolidLike } from "react-icons/bi";
 import { Button } from "../ui/button";
@@ -30,9 +30,8 @@ interface IPostCardProps {
   created_at: string;
   likes_count: number;
   author: IUser;
-  postId: number;
+  postId: string;
   liked_by_me: boolean;
-  tagsPost: ITag[];
 }
 
 // Componente que renderiza uma postagem
@@ -44,7 +43,6 @@ export const PostCard = ({
   postId,
   likes_count,
   liked_by_me,
-  tagsPost,
 }: IPostCardProps) => {
   const [like, setLike] = useState(liked_by_me);
   const [likeCounts, setLikeCounts] = useState(likes_count);
@@ -55,15 +53,10 @@ export const PostCard = ({
 
   // Dar like
   const handleLike = async () => {
-    if (like) {
-      setLike(false);
-      setLikeCounts((prev) => prev - 1);
-      await unlikePost(user?.id, postId, token);
-    } else {
       setLike(true);
       setLikeCounts((prev) => prev + 1);
-      await likeInPost(user?.id, postId, token);
-    }
+      await likeInPost(postId, token);
+    
   };
 
   // Salvar postagens
@@ -71,7 +64,7 @@ export const PostCard = ({
     const data = await SavePosts(postId, token);
     await listSavedPosts(token);
     console.log(data);
-    toast.success(`${data.message}`);
+    toast.success(`${data.msg}`);
   };
 
   // Formatando data
@@ -87,9 +80,9 @@ export const PostCard = ({
         <span className="font-bold text-[15px] flex items-center md:p-4 gap-6 justify-between md:gap-5 md:text-2xl">
           <User2Icon className="size-8" />
           <div>
-            {author.name}
+            {author?.name || "anonimo"}
             <div className="flex gap-3">
-              <span className="font-light text-[16px]">[{author.role}]</span>
+              <span className="font-light text-[16px]">[{author?.role}]</span>
               <span className="font-light text-[16px]">{date}</span>
             </div>
           </div>
@@ -98,10 +91,9 @@ export const PostCard = ({
           <span>
             <PostTools
               type="editPost" //Tipo de ação que será feita ao abrir as ferramentas (editar post)
-              ID={postId}
+              id={postId}
               content={content}
               titlePost={title}
-              tagsPost={tagsPost}
             />
           </span>
         )}
@@ -128,7 +120,6 @@ export const PostCard = ({
               <BiLike className="size-6" />
             )}
           </Button>
-          <span>{likeCounts}</span>
         </div>
         <Button variant={"ghost"} className="cursor-pointer">
           <Comments post_id={postId} />
@@ -143,13 +134,8 @@ export const PostCard = ({
       </div>
       <hr />
       <div>
-        {tagsPost &&
-          tagsPost.map((t) => (
-            <span key={t.ID} className="mr-2 px-2 py-1 bg-gray-200 rounded">
-              {t.Name}
-            </span>
-          ))}
-      </div>
+</div>
+
     </div>
   );
 };

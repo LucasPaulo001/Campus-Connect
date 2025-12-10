@@ -29,18 +29,17 @@ export default function MyPosts() {
   return (
       <div className="flex flex-col justify-between items-center">
         <h1 className="text-2xl my-10">Minhas Postagens</h1>
-        <div className="w-full flex justify-center">
-          {Array.isArray(myPosts) && myPosts?.map((myPost, index) => (
+        <div className="w-full flex flex-col items-center gap-15 md:flex-row justify-center">
+          {Array.isArray(myPosts) && myPosts?.map((myPost) => (
             <PostCard
-              key={`${myPost.id}_${index}`}
+              key={myPost.id}
               title={myPost.title}
               content={myPost.content}
-              created_at={myPost.created_at}
-              likes_count={myPost.likes_count}
-              author={myPost.user}
+              created_at={myPost.createdAt}
+              likes_count={myPost.likes}
+              author={myPost.author}
               postId={myPost.id}
-              tagsPost={myPost.tags}
-              liked_by_me={myPost.liked_by_me}
+              liked_by_me={false}
             />
           ))}
         </div>

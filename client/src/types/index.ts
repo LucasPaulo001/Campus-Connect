@@ -1,5 +1,5 @@
 export interface IUser {
-  id: number;
+  id?: string;
   name: string;
   name_user: string;
   email: string;
@@ -13,11 +13,6 @@ interface Like {
   PostId: number;
 }
 
-export interface ITag {
-  ID: number;
-  Name: string;
-}
-
 export type DialogType =
   | "createPost"
   | "editPost"
@@ -27,31 +22,29 @@ export type DialogType =
   | "createGroup";
 
 export interface IPost {
-  id: number;
+  id: string;
   title: string;
   content: string;
-  created_at: string;
-  user: IUser;
-  likes_count: number;
-  Likes: Like[];
-  liked_by_me: boolean;
-  tags: ITag[];
+  author: IUser;
+  likes: number;
+  createdAt: string;
 }
 
+
 export interface IComment {
-  id: number;
-  user: IUser;
+  id: string;
+  author: IUser;
   Likes: number | null;
   content: string;
-  created_at: string;
+  createdAt: string;
 }
 
 export interface IResponsesComment {
-  id: number;
-  user: IUser;
-  comment_id: number;
+  id: string;
+  author: IUser;
+  comment: string;
   content: string;
-  created_at: string;
+  createdAt: string;
 }
 
 export interface IStudent {

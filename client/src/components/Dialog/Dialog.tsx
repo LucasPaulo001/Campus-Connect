@@ -18,7 +18,7 @@ import { useActionContext } from "@/contexts/ActionsContext";
 import { Spinner } from "../ui/spinner";
 import { toast } from "sonner";
 import { Input } from "../ui/input";
-import { DialogType, ITag } from "@/types";
+import { DialogType } from "@/types";
 import Image from "next/image";
 import { CreateGroup } from "../CreateGroup/CreateGroup";
 import { MarkdownEditor } from "../MdEditor/MdEditor";
@@ -26,18 +26,18 @@ import { MarkdownEditor } from "../MdEditor/MdEditor";
 interface IDialogsProps {
   content?: string | undefined;
   titlePost?: string; //Para edição
-  tagsPost?: ITag[] | undefined;
-  ID?: number | undefined;
-  post_id?: number | undefined;
+  id?: string | undefined;
+  post_id?: string | undefined;
   botton: { value: string; icon: React.ReactNode | string };
   title: string;
   label: string;
   type?: DialogType;
+  tagsPost?: string[];
 }
 
 export function Dialogs({
   content,
-  ID,
+  id,
   post_id,
   botton,
   label,
@@ -49,7 +49,7 @@ export function Dialogs({
   const [value, setValue] = useState<string | undefined>(content);
   const [titlePostagem, setTitlePost] = useState<string>("");
   const [tags, setTags] = useState<string>(
-    tagsPost ? tagsPost.map((t) => t.Name).join(", ") : ""
+    tagsPost ? tagsPost.map((t: any) => t.Name).join(", ") : ""
   );
   const [loadingEdit, setLoadingEdit] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
@@ -58,8 +58,8 @@ export function Dialogs({
 
   useEffect(() => {
     if (open && tagsPost) {
-      setTags(tagsPost.map((t) => t.Name).join(", "));
-      console.log(ID);
+      setTags(tagsPost.map((t: any) => t.Name).join(", "));
+      console.log(id);
     }
   }, [open, tagsPost]);
 
@@ -79,7 +79,7 @@ export function Dialogs({
     setLoadingEdit(true);
     try {
       if (!value?.trim()) return;
-      await editComment(ID, value, token);
+      await editComment(id, value, token);
       await listComments(post_id, token);
       toast.success("Comentário editado com sucesso!");
     } finally {
@@ -131,7 +131,7 @@ export function Dialogs({
         .map((t) => t.trim().toLocaleLowerCase())
         .filter((tag) => tag.length > 0);
 
-      await editPost(ID, titlePostagem, value, token, tagsToArr);
+      await editPost(id, titlePostagem, value, token, tagsToArr);
       toast.success("Postagem editada com sucesso!");
 
       await listPosts(token);

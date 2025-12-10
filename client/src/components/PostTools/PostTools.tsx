@@ -18,16 +18,15 @@ import { useActionContext } from "@/contexts/ActionsContext";
 import { toast } from "sonner";
 import { ConfirmToast } from "../ConfirmToast/ConfirmToast";
 import { useState } from "react";
-import { DialogType, ITag } from "@/types";
+import { DialogType } from "@/types";
 
 interface ICommentToolsProps {
-  ID: number;
+  id: string;
   content?: string;
-  post_id?: number | undefined;
+  post_id?: string | undefined;
   titlePost?: string; // Para editar
-  tagsPost?: ITag[] | undefined;
   type?: DialogType;
-  commentId?: number
+  commentId?: string
 }
 
 const title = {
@@ -36,11 +35,10 @@ const title = {
 };
 
 export default function PostTools({
-  ID,
+  id,
   content,
   post_id,
   titlePost,
-  tagsPost,
   type,
   commentId
 }: ICommentToolsProps) {
@@ -53,7 +51,7 @@ export default function PostTools({
   const handleDeletePost = async () => {
     setLoading(true);
     try {
-      await deletePost(ID, token);
+      await deletePost(id, token);
       await listPosts(token);
       await listMyPosts(token);
       toast.success("Postagem deletada com sucesso");
@@ -64,14 +62,14 @@ export default function PostTools({
 
   // Deletar comentário
   const handleDeleteComment = async () => {
-    await deleteComment(ID, token);
+    await deleteComment(id, token);
     await listComments(post_id, token);
     toast.success("Comentário deletado com sucesso");
   };
 
   // Deletar resposta
   const handleDeleteResponse = async () => {
-    await deleteResponse(ID, token);
+    await deleteResponse(id, token);
     await loadResponses(commentId, token);
     toast.success("Resposta deletada com sucesso");
   }
@@ -108,14 +106,13 @@ export default function PostTools({
 
                 <div className="cursor-pointer">
                   <Dialogs
-                    tagsPost={tagsPost}
                     titlePost={titlePost}
                     type="editPost"
                     title="Edição de Postagem"
                     label="Conteúdo"
                     botton={title}
                     content={content}
-                    ID={ID}
+                    id={id}
                   />
                 </div>
               </>
@@ -139,9 +136,8 @@ export default function PostTools({
                     label="Comentário"
                     botton={title}
                     content={content}
-                    ID={ID}
+                    id={id}
                     post_id={post_id}
-                    tagsPost={tagsPost}
                   />
                 </div>
               </>
@@ -157,6 +153,7 @@ export default function PostTools({
                 >
                   <BiTrash />
                   Excluir
+          
                 </Button>
                 <div className="cursor-pointer">
                   <Dialogs
@@ -165,9 +162,8 @@ export default function PostTools({
                     label="Comentário"
                     botton={title}
                     content={content}
-                    ID={ID}
+                    id={id}
                     post_id={post_id}
-                    tagsPost={tagsPost}
                   />
                 </div>
               </>
