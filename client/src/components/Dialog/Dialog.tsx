@@ -99,9 +99,7 @@ export function Dialogs({
         tagsArray
       );
 
-      // Atualiza feed localmente
-      setPosts((prev) => [createdPost, ...prev]);
-      setMyPosts((prev) => [createdPost, ...prev]);
+      await listPosts(token);
 
       toast.success("Post criado!");
 
