@@ -2,6 +2,7 @@ import { UserRepository } from "./user.repository.js";
 import { jwtGenerate } from "../../settings/jwt/jwt.js";
 import bcrypt from "bcrypt";
 import { TUser } from "../../@types/user/user.type.js";
+import { FollowRepository } from "../follow/follow.repository.js";
 
 // Registro
 export async function RegisterService({
@@ -62,7 +63,16 @@ export async function LoginService(email: string, password: string) {
 }
 
 // Perfil
-export function ProfileService(user: TUser) {
+export async function ProfileService(user: TUser) {
+
+  if(!user._id){
+    throw new Error("Id de usuário inválido.")
+  }
+
+  const followers = await FollowRepository.following(user._id);
+
+  const following = await FollowRepository.followers(user._id);
+
   const dataFormated = {
     id: user?._id,
     name: user.name,
@@ -70,6 +80,9 @@ export function ProfileService(user: TUser) {
     role: user.role,
     email: user.email,
     biography: user.biography,
+    xp: user.xp,
+    followers: followers.length,
+    following: following.length,
   };
 
   return dataFormated;

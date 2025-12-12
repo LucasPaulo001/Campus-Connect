@@ -6,8 +6,6 @@ export async function ListChallengeByGroupService(groupId: string){
 
     if(!challenge) throw new Error("Desafio não encontrado.");
 
-    if(challenge.length === 0) throw new Error("Nenhum desafio");
-
     const formatedData = challenge.map((c) => {
 
         const author = c.author as unknown as TAuthor;

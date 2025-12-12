@@ -7,6 +7,7 @@ import {
   SearchUsersService,
 } from "./user.service.js";
 import { CustomRequest } from "../../middlewares/AuthGuard.js";
+import { ProfileUsersService } from "./services/userAction.service.js";
 
 // Registro
 export async function RegisterController(req: CustomRequest, res: Response) {
@@ -35,9 +36,9 @@ export async function LoginController(req: CustomRequest, res: Response) {
 }
 
 // Perfil
-export function ProfileController(req: CustomRequest, res: Response) {
+export async function ProfileController(req: CustomRequest, res: Response) {
   const user = req.user;
-  const result = ProfileService(user);
+  const result = await ProfileService(user);
 
   res.status(200).json(result);
 }
@@ -74,5 +75,21 @@ export async function SearchUserController(req: CustomRequest, res: Response){
 
     res.status(500).json({ err: err.message });
 
+  }
+}
+
+// Perfil de usuários
+export async function ProfileUsersController(req: CustomRequest, res: Response) {
+  try{
+
+    const userId = req.params.id;
+
+    const result = await ProfileUsersService(userId);
+
+    res.status(200).json(result);
+
+  }
+  catch(err: any){
+    res.status(500).json({ err: err });
   }
 }

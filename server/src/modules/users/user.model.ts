@@ -29,6 +29,11 @@ const UserSchema = new mongoose.Schema<TUser>({
     type: String,
     required: true,
   },
+  
+  xp: {
+    type: Number,
+    default: 0
+  },
 
   postsSaveds: [
     {

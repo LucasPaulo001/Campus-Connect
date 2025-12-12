@@ -3,6 +3,7 @@ import {
   LoginController,
   ProfileController,
   ProfileEditController,
+  ProfileUsersController,
   RegisterController,
   SearchUserController,
 } from "./user.controller.js";
@@ -14,5 +15,6 @@ userRouter.post("/auth/login", LoginController);
 userRouter.get("/auth/profile", authGuard, ProfileController);
 userRouter.patch("/auth/profile-edit", authGuard, ProfileEditController);
 userRouter.get("/search/user", authGuard, SearchUserController);
+userRouter.get("/profile/user/:id", authGuard, ProfileUsersController);
 
 export default userRouter;
