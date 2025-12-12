@@ -64,9 +64,8 @@ export async function LoginService(email: string, password: string) {
 
 // Perfil
 export async function ProfileService(user: TUser) {
-
-  if(!user._id){
-    throw new Error("Id de usuário inválido.")
+  if (!user._id) {
+    throw new Error("Id de usuário inválido.");
   }
 
   const followers = await FollowRepository.following(user._id);
@@ -97,11 +96,25 @@ type DataUpdates = {
 
 // Editar dados
 export async function ProfileEditService(id: string, updates: DataUpdates) {
-  if (updates.nameUser) {
+  const user = await UserRepository.findById(id);
+
+  if (!user) {
+    throw new Error("Usuário não encontrado.");
+  }
+
+  if (updates.nameUser && updates.nameUser !== user.nameUser) {
     const existsNameUser = await UserRepository.findByUserName(
       updates.nameUser
     );
     if (existsNameUser) throw new Error("Nome de usuário já está em uso.");
+  }
+
+  if (!updates.name) {
+    throw new Error("Nome é obrigatório.");
+  }
+
+  if (updates.name && updates.name === user.name) {
+    throw new Error("Informe um valor diferente.");
   }
 
   if (updates.password) {
@@ -123,7 +136,7 @@ export async function SearchUsersService(userId: string, query: string) {
   return users.map((u) => ({
     id: u._id,
     name: u.name,
-    email: u.email,
     role: u.role,
+    avatarUrl: u.avatarUrl,
   }));
 }
