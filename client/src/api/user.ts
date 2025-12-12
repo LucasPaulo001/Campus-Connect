@@ -4,7 +4,7 @@ import axiosInstace from "./axiosInstance";
 export const EditData = async (
   name: string | undefined,
   nameUser: string | undefined,
-  bio: string,
+  biography: string,
   token: string
 ) => {
   const res = await axiosInstace.patch(
@@ -12,7 +12,7 @@ export const EditData = async (
     {
       name,
       nameUser,
-      bio,
+      biography,
     },
     {
       headers: {

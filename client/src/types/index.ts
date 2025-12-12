@@ -6,6 +6,7 @@ export interface IUser {
   userId: string;
   role: string;
   bio: string;
+  xp: number
 }
 
 export type DialogType =
@@ -31,8 +32,9 @@ export interface IPost {
 export interface IComment {
   id: string;
   author: IUser;
-  likes: number | null;
+  likes: number;
   content: string;
+  liked: boolean;
   createdAt: string;
 }
 
@@ -59,15 +61,12 @@ type Teacher = {
 };
 
 type Members = {
-  id: number;
-  student_id: number;
-  student: {
-    id: number;
-    name: string;
-    email: string;
-    bio: string;
-    role: string;
-  };
+  id: string;
+  name: string;
+  email: string;
+  bio: string;
+  role: string;
+  
 };
 
 export interface IGroup {
@@ -75,18 +74,20 @@ export interface IGroup {
   name: string;
   description: string;
   teacher_id: number;
-  teacher: Teacher;
-  user: IUser;
+  author: IUser;
   members: Members[];
 }
 
+type data = {
+  xp: number
+}
+
 export interface IChallenge {
-  id: number;
+  id: string;
   title: string;
   description: string;
-  teacher: Teacher;
+  author: IUser;
   type: string;
-  xp: number;
-  group_id: number;
-  teacher_id: number;
+  data: data;
+  group_id: string;
 }
