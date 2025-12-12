@@ -6,7 +6,8 @@ export interface IUser {
   userId: string;
   role: string;
   bio: string;
-  xp: number
+  avatarUrl: string;
+  xp: number;
 }
 
 export type DialogType =

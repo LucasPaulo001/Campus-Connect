@@ -59,6 +59,16 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
               </span>
             ) : (
               <>
+                {user?.avatarUrl ? (
+                  <div className="flex justify-center items-center h-20">
+                    <img src={user.avatarUrl} alt="foto de perfil" />
+                  </div>
+                ) : (
+                  <div className="flex justify-center items-center h-20">
+                    <User className="size-15" />
+                  </div>
+                )}
+
                 <span className="font-semibold">{user?.name_user}</span>
                 <span className="text-sm text-muted-foreground">
                   {user?.email}
@@ -67,12 +77,15 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
                   {user?.role}
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  {user?.xp}
+                  Quantidade de XP:{" "}
+                  <span className="text-blue-500">{user?.xp}</span>
                 </span>
                 <hr />
                 <span className="mt-3">
                   <strong>Biografia:</strong>
-                  {user?.bio === "" || user?.bio === undefined ? " Sem biografia" : " " + user?.bio}
+                  {user?.bio === "" || user?.bio === undefined
+                    ? " Sem biografia"
+                    : " " + user?.bio}
                 </span>
               </>
             )}
