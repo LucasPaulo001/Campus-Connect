@@ -16,7 +16,8 @@ export default function ProfileEdit() {
   const [newNameUser, setNewNameUser] = useState<string | undefined>(
     user?.name_user
   );
-  const [bio, setBio] = useState<string | "">("");
+  const [biography, setBiography] = useState<string | "">("");
+  const [avatar, setAvatar] = useState<string | "">("");
   const [newPass, setNewPass] = useState<string | "">("");
   const [repeatPass, setRepeatPass] = useState<string | "">("");
 
@@ -26,7 +27,7 @@ export default function ProfileEdit() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const data = await EditData(newName, newNameUser, bio, token);
+    const data = await EditData(newName, newNameUser, biography, token);
     await loadProfile();
     console.log(data);
   };
@@ -61,8 +62,17 @@ export default function ProfileEdit() {
               <Textarea
                 id="bio"
                 placeholder="Fale sobre você..."
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
+                value={biography}
+                onChange={(e) => setBiography(e.target.value)}
+              />
+            </div>
+            <div className="py-2">
+              <label htmlFor="avatar">Avatar:</label>
+              <Input
+                placeholder="link da imagem"
+                id="avatar"
+                value={avatar}
+                onChange={(e) => setAvatar(e.target.value)}
               />
             </div>
             <hr className="my-2" />

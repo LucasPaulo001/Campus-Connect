@@ -3,16 +3,16 @@ import axiosInstace from "./axiosInstance";
 // Editar dados do perfil
 export const EditData = async (
   name: string | undefined,
-  name_user: string | undefined,
-  bio: string,
+  nameUser: string | undefined,
+  biography: string,
   token: string
 ) => {
   const res = await axiosInstace.patch(
-    "/api/profile",
+    "/api/auth/profile-edit",
     {
       name,
-      name_user,
-      bio,
+      nameUser,
+      biography,
     },
     {
       headers: {
@@ -26,7 +26,7 @@ export const EditData = async (
 
 // Solicitar categoria de professor
 export const BecomeTeacher = async (token: string, formation: string, departament: string) => {
-  const res = await axiosInstace.post("/api/become/teacher", 
+  const res = await axiosInstace.post("/api/teacher", 
     {
       formation,
       departament

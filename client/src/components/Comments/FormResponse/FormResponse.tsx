@@ -11,7 +11,7 @@ import { GrSend } from "react-icons/gr";
 
 interface IFormResProps {
     comment: IComment;
-    openSend: number;
+    openSend: string;
 }
 
 export const FormResponse = ({ comment }: IFormResProps) => {
@@ -35,7 +35,7 @@ export const FormResponse = ({ comment }: IFormResProps) => {
     return(
         <div className="flex w-full gap-3">
             <Input
-                placeholder={`Sua resposta para ${comment.user.name}`}
+                placeholder={`Sua resposta para ${comment.author.name}`}
                 onChange={(e) => setContent(e.target.value)}
             />
 

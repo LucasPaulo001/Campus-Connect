@@ -1,6 +1,6 @@
 "use client";
 
-import { ITag, IUser } from "@/types";
+import { IUser } from "@/types";
 import { useEffect, useState } from "react";
 import { BiLike, BiSolidLike } from "react-icons/bi";
 import { Button } from "../ui/button";
@@ -9,16 +9,20 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { Comments } from "../Comments/Comments";
 import { convertDate } from "@/services/formateDate";
 import { FaRegBookmark } from "react-icons/fa";
-import { User2Icon } from "lucide-react";
+import { User, User2Icon } from "lucide-react";
 import { SavePosts } from "@/api/posts";
 import { toast } from "sonner";
+import { FaBookmark } from "react-icons/fa";
 
 import dynamic from "next/dynamic";
+import Image from "next/image";
 
-const Markdown = dynamic(() => import("@uiw/react-md-editor").then(mod => mod.default.Markdown), {
-  ssr: false
-});
-
+const Markdown = dynamic(
+  () => import("@uiw/react-md-editor").then((mod) => mod.default.Markdown),
+  {
+    ssr: false,
+  }
+);
 
 const PostTools = dynamic(() => import("../PostTools/PostTools"), {
   ssr: false,
@@ -30,9 +34,9 @@ interface IPostCardProps {
   created_at: string;
   likes_count: number;
   author: IUser;
-  postId: number;
-  liked_by_me: boolean;
-  tagsPost: ITag[];
+  postId: string;
+  liked: boolean;
+  saved: boolean;
 }
 
 // Componente que renderiza uma postagem
@@ -43,10 +47,11 @@ export const PostCard = ({
   author,
   postId,
   likes_count,
-  liked_by_me,
-  tagsPost,
+  liked,
+  saved,
 }: IPostCardProps) => {
-  const [like, setLike] = useState(liked_by_me);
+  const [like, setLike] = useState(liked);
+  const [save, setSave] = useState(saved);
   const [likeCounts, setLikeCounts] = useState(likes_count);
   const { likeInPost, unlikePost } = useActionContext();
   const { token, user } = useAuthContext();
@@ -57,51 +62,81 @@ export const PostCard = ({
   const handleLike = async () => {
     if (like) {
       setLike(false);
+
       setLikeCounts((prev) => prev - 1);
-      await unlikePost(user?.id, postId, token);
+
+      await likeInPost(postId, token);
     } else {
       setLike(true);
+
       setLikeCounts((prev) => prev + 1);
-      await likeInPost(user?.id, postId, token);
+
+      await likeInPost(postId, token);
     }
   };
 
   // Salvar postagens
   const handleSavePost = async () => {
-    const data = await SavePosts(postId, token);
-    await listSavedPosts(token);
-    console.log(data);
-    toast.success(`${data.message}`);
+    if (save) {
+      setSave(false);
+
+      await SavePosts(postId, token);
+
+      await listSavedPosts(token);
+    } else {
+      setSave(true);
+      const data = await SavePosts(postId, token);
+
+      await listSavedPosts(token);
+
+      console.log(data);
+
+      toast.success(`${data.msg}`);
+    }
   };
 
   // Formatando data
   const date = convertDate(created_at);
 
   useEffect(() => {
-    setLike(liked_by_me);
-  }, [liked_by_me]);
+    setLike(liked);
+    setSave(saved);
+  }, [liked, saved]);
 
   return (
     <div className="bg-white dark:bg-gray-800 mx-3 w-[90%] md:w-[80%] border rounded-xl shadow-sm p-2 space-y-4">
       <div className="flex justify-between items-center">
         <span className="font-bold text-[15px] flex items-center md:p-4 gap-6 justify-between md:gap-5 md:text-2xl">
-          <User2Icon className="size-8" />
+          {user?.avatarUrl && user.avatarUrl.trim().length > 0 ? (
+            <div className="flex justify-center my-3.5 items-center h-20">
+              <Image
+                className="rounded-full"
+                src={user?.avatarUrl}
+                width={60}
+                height={60}
+                alt="perfil"
+              />
+            </div>
+          ) : (
+            <div className="flex justify-center items-center h-20">
+              <User className="size-15" />
+            </div>
+          )}
           <div>
-            {author.name}
+            {author?.name || "anonimo"}
             <div className="flex gap-3">
-              <span className="font-light text-[16px]">[{author.role}]</span>
+              <span className="font-light text-[16px]">[{author?.role}]</span>
               <span className="font-light text-[16px]">{date}</span>
             </div>
           </div>
         </span>
-        {user?.id === author?.id && (
+        {author?.userId && user?.id === author?.userId && (
           <span>
             <PostTools
               type="editPost" //Tipo de ação que será feita ao abrir as ferramentas (editar post)
-              ID={postId}
+              id={postId}
               content={content}
               titlePost={title}
-              tagsPost={tagsPost}
             />
           </span>
         )}
@@ -110,8 +145,10 @@ export const PostCard = ({
       <div className="flex flex-col gap-5">
         <h2 className="font-bold md:text-2xl">{title}</h2>
         <div>
-          
-          <Markdown source={content} style={{ whiteSpace: "pre-wrap", backgroundColor: "transparent" }} />
+          <Markdown
+            source={content}
+            style={{ whiteSpace: "pre-wrap", backgroundColor: "transparent" }}
+          />
         </div>
       </div>
       <hr />
@@ -120,36 +157,33 @@ export const PostCard = ({
           <Button
             variant="ghost"
             onClick={() => handleLike()}
-            className="flex cursor-pointer px-1 py-0 items-center gap-2"
+            className="flex cursor-pointer transition active:scale-90 px-1 py-0 items-center gap-2"
           >
             {like ? (
-              <BiSolidLike className="size-6 text-blue-600" />
+              <BiSolidLike className="size-6 text-blue-600 transition-all duration-200 transform scale-110 animate-like" />
             ) : (
-              <BiLike className="size-6" />
+              <BiLike className="size-6 transition-all duration-200 transform hover:scale-110" />
             )}
           </Button>
-          <span>{likeCounts}</span>
+          {likeCounts || ""}
         </div>
         <Button variant={"ghost"} className="cursor-pointer">
           <Comments post_id={postId} />
         </Button>
         <Button
           variant={"ghost"}
-          className="cursor-pointer"
+          className="cursor-pointer transition active:scale-90"
           onClick={() => handleSavePost()}
         >
-          <FaRegBookmark />
+          {save ? (
+            <FaBookmark className="size-5 text-blue-600 transition-all duration-200 transform scale-110 animate-save" />
+          ) : (
+            <FaRegBookmark className="size-5 transition-all duration-200 transform hover:scale-110" />
+          )}
         </Button>
       </div>
       <hr />
-      <div>
-        {tagsPost &&
-          tagsPost.map((t) => (
-            <span key={t.ID} className="mr-2 px-2 py-1 bg-gray-200 rounded">
-              {t.Name}
-            </span>
-          ))}
-      </div>
+      <div></div>
     </div>
   );
 };

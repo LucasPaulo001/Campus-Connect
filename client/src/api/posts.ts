@@ -2,7 +2,7 @@ import axiosInstace from "./axiosInstance";
 
 // Criar postagem
 export const addPost = async (title: string, content: string | undefined, token: string, tags?: string[]) => {
-  const res = await axiosInstace.post("/api/posts", 
+  const res = await axiosInstace.post("/api/post", 
     { title, content, tags },
     {
       headers: {
@@ -15,7 +15,7 @@ export const addPost = async (title: string, content: string | undefined, token:
 }
 
 // Deletar postagens
-export const deletePost = async (post_id: number | undefined, token: string) => {
+export const deletePost = async (post_id: string | undefined, token: string) => {
   const res = await axiosInstace.delete(`/api/post/${post_id}`, 
     {
       headers: {
@@ -28,7 +28,7 @@ export const deletePost = async (post_id: number | undefined, token: string) => 
 }
 
 // Editar postagens 
-export const editPost = async (post_id: number | undefined, title: string, content: string | undefined, token: string, tags?: string[]) => {
+export const editPost = async (post_id: string | undefined, title: string, content: string | undefined, token: string, tags?: string[]) => {
   const res = await axiosInstace.patch(`/api/post/${post_id}`, 
     { title, content, tags },
     {
@@ -43,7 +43,7 @@ export const editPost = async (post_id: number | undefined, title: string, conte
 
 // Listar postagens no feed
 export const loadPosts = async (token: string) => {
-  const res = await axiosInstace.get("/api/feed", {
+  const res = await axiosInstace.get("/api/post", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -54,7 +54,7 @@ export const loadPosts = async (token: string) => {
 
 // Listar postagens do usuário
 export const LoadMyPosts = async (token: string) => {
-  const res = await axiosInstace.get("/api/posts", 
+  const res = await axiosInstace.get("/api/post/author", 
     {
       headers: {
         Authorization: `Bearer ${token}`
@@ -66,8 +66,8 @@ export const LoadMyPosts = async (token: string) => {
 }
 
 // Salvar postagem
-export const SavePosts = async (post_id: number, token: string) => {
-  const res = await axiosInstace.post(`/api/post/${post_id}/save`,
+export const SavePosts = async (post_id: string, token: string) => {
+  const res = await axiosInstace.post(`/api/post/${post_id}`,
     {},
     {
       headers: {
@@ -81,7 +81,7 @@ export const SavePosts = async (post_id: number, token: string) => {
 
 // Listar postagens salvas
 export const GetSavedPosts = async (token: string) => {
-  const res = await axiosInstace.get(`/api/post/saved-posts`,
+  const res = await axiosInstace.get(`/api/post/saveds`,
     {
       headers: {
         Authorization: `Bearer ${token}`
@@ -94,20 +94,16 @@ export const GetSavedPosts = async (token: string) => {
 
 // Dar Like nos posts
 export const likePosts = async (
-  user_id: number | undefined,
-  post_id: number | undefined,
+  post_id: string | undefined,
   token: string
 ) => {
   const res = await axiosInstace.post(
-    "/api/post/like",
-    {
-      user_id,
-      post_id,
-    },
+    `/api/post/like/${post_id}`,
+    {},
     {
       headers: {
-        Authorization: `Bearer ${token}`,
-      },
+        Authorization: `Bearer ${token}`
+      }
     }
   );
 
@@ -116,8 +112,8 @@ export const likePosts = async (
 
 // Retirar like
 export const removeLikePost = async (
-  user_id: number | undefined,
-  post_id: number,
+  user_id: string | undefined,
+  post_id: string,
   token: string
 ) => {
   const res = await axiosInstace.delete("/api/post/unlike", {
@@ -133,8 +129,8 @@ export const removeLikePost = async (
 };
 
 // Listar comentários de uma publicação
-export const loadComments = async (post_id: number | undefined, token: string) => {
-  const res = await axiosInstace.get(`/api/post/${post_id}/comments`, {
+export const loadComments = async (post_id: string | undefined, token: string) => {
+  const res = await axiosInstace.get(`/api/comment/post/${post_id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -146,11 +142,11 @@ export const loadComments = async (post_id: number | undefined, token: string) =
 //Criar comentáio
 export const createComents = async (
   content: string,
-  post_id: number,
+  post_id: string,
   token: string
 ) => {
   const res = await axiosInstace.post(
-    `/api/post/${post_id}/comments`,
+    `/api/comment/post/${post_id}`,
     {
       content,
     },
@@ -166,11 +162,11 @@ export const createComents = async (
 
 // Editar comentário
 export const editComment = async (
-  commentId: number | undefined,
+  commentId: string | undefined,
   content: string,
   token: string
 ) => {
-  const res = await axiosInstace.put(
+  const res = await axiosInstace.patch(
     `/api/comment/${commentId}`,
     { content },
     {
@@ -184,7 +180,7 @@ export const editComment = async (
 };
 
 // Deletar comentário
-export const deleteComment = async (comment_id: number | undefined, token: string) => {
+export const deleteComment = async (comment_id: string | undefined, token: string) => {
   const res = await axiosInstace.delete(`/api/comment/${comment_id}`,
     {
       headers: {
@@ -197,10 +193,9 @@ export const deleteComment = async (comment_id: number | undefined, token: strin
 }
 
 // Dar Like nos comentários
-export const likeComment = async (user_id: number | undefined, comment_id: number | undefined, token: string) => {
-  const res = await axiosInstace.post("/api/comment/like", {
-    user_id,
-    comment_id,
+export const likeComment = async (user_id: string | undefined, comment_id: string | undefined, token: string) => {
+  const res = await axiosInstace.post(`/api/comment/like/${comment_id}`, {
+    user_id
   }, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -211,8 +206,8 @@ export const likeComment = async (user_id: number | undefined, comment_id: numbe
 };
 
 // Listar respostas de comentários
-export const loadResponses = async (comment_id: number | undefined, token: string) => {
-  const res = await axiosInstace.get(`/api/comment/${comment_id}/response`,
+export const loadResponses = async (comment_id: string | undefined, token: string) => {
+  const res = await axiosInstace.get(`/api/responses/comment/${comment_id}`,
     {
       headers: {
         Authorization: `Bearer ${token}`
@@ -224,7 +219,7 @@ export const loadResponses = async (comment_id: number | undefined, token: strin
 }
 
 // Deletar respostas de comentário
-export const deleteResponse = async (response_id: number, token: string) => {
+export const deleteResponse = async (response_id: string, token: string) => {
   const res = await axiosInstace.delete(`/api/response/${response_id}`,
     {
       headers: {
@@ -237,8 +232,8 @@ export const deleteResponse = async (response_id: number, token: string) => {
 }
 
 // Responder Comentário
-export const responseComment = async (comment_id: number | undefined, content: string, token: string) => {
-  const res = await axiosInstace.post(`/api/comment/${comment_id}/response`,
+export const responseComment = async (comment_id: string | undefined, content: string, token: string) => {
+  const res = await axiosInstace.post(`/api/response/comment/${comment_id}`,
     {
       content
     },

@@ -2,19 +2,19 @@ import axiosInstace from "./axiosInstance";
 
 // Login
 export const login = async (email: string, password: string) => {
-    const res = await axiosInstace.post("/login", { email, password })
+    const res = await axiosInstace.post("/api/auth/login", { email, password })
     return res.data
 }
 
 // Registro
 export const register = async (data: any) => {
-    const res = await axiosInstace.post("/register", data)
+    const res = await axiosInstace.post("/api/auth/register", data)
     return res.data
 }
 
 // Perfil
 export const profile = async (token: string) => {
-    const res = await axiosInstace.get("/api/profile", {
+    const res = await axiosInstace.get("/api/auth/profile", {
         headers: {
             Authorization: `Bearer ${token}`
         }

@@ -27,7 +27,8 @@ export default function GroupDetail() {
     try {
       if (!id) return;
       const data = await LoadGroup(token, group_id);
-      setGroup(data.group);
+      setGroup(data.dataFormated);
+      console.log(data.dataFormated);
     } finally {
       setLoading(false);
     }
@@ -42,8 +43,8 @@ export default function GroupDetail() {
   return (
     <div className="max-w-4xl mx-auto py-6 px-3.5">
       {/* HEADER */}
-      <h1 className="text-3xl font-bold">{group?.nome}</h1>
-      <p className="text-gray-600">{group?.Description}</p>
+      <h1 className="text-3xl font-bold">{group?.name}</h1>
+      <p className="text-gray-600">{group?.description}</p>
 
       <div className="mt-6">
         <Tabs defaultValue="posts">
@@ -60,11 +61,11 @@ export default function GroupDetail() {
               <span className="flex justify-between items-center">
                 <h1>Atividades da turma</h1>
                 {user?.role === "professor" && (
-                  <ModalPosts group_id={Number(group_id)} />
+                  <ModalPosts group_id={String(group_id)} />
                 )}
               </span>
               <hr className="my-5" />
-              <Post group_id={Number(group_id)} />
+              <Post group_id={String(group_id)} />
             </div>
           </TabsContent>
 
@@ -75,7 +76,7 @@ export default function GroupDetail() {
               <hr className="my-1.5" />
               <div className="flex flex-row gap-2 mt-5 text-[18px] items-center">
                 <PiChalkboardTeacherThin />
-                <span>{group?.teacher.user.name}</span>
+                <span>{group?.author.name}</span>
               </div>
             </div>
 
@@ -88,10 +89,16 @@ export default function GroupDetail() {
               {group?.members.map((m) => (
                 <div key={m.id}>
                   <div className="flex items-center gap-1.5">
-                    <PiStudent />
-                    <span>{m.student.name}</span>
+                    {m.id !== user?.id && (
+                      <>
+                        <span className="flex items-center gap-1.5">
+                          <PiStudent />
+                          {m.name}
+                        </span>
+                        <hr className="my-3" />
+                      </>
+                    )}
                   </div>
-                  <hr className="my-3" />
                 </div>
               ))}
             </div>
@@ -100,9 +107,8 @@ export default function GroupDetail() {
           {user?.role === "professor" && (
             <TabsContent value="settings">
               <SettingsGroups
-                group_id={Number(group?.id)}
-                title={group?.nome}
-                description={group?.Description}
+                title={group?.name}
+                description={group?.description}
               />
             </TabsContent>
           )}

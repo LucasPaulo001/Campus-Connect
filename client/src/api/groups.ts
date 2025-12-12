@@ -3,7 +3,7 @@ import axiosInstace from "./axiosInstance";
 
 // Listagem de grupos criados pelo professor
 export const LoadGroups = async (token: string) => {
-  const res = await axiosInstace.get("/api/group/list", {
+  const res = await axiosInstace.get("api/group/user", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -14,7 +14,7 @@ export const LoadGroups = async (token: string) => {
 
 // Busca de estudantes
 export const SearchStudents = async (token: string, q: string) => {
-  const res = await axiosInstace.get(`/api/students/search?q=${q}`, {
+  const res = await axiosInstace.get(`/api/search/user?q=${q}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -27,11 +27,11 @@ export const SearchStudents = async (token: string, q: string) => {
 export const CreateNewGroup = async (
   name: string,
   description: string,
-  members: number[],
+  members: string[],
   token: string
 ) => {
   const res = await axiosInstace.post(
-    "/api/group/create",
+    "/api/group",
     {
       name,
       description,
@@ -64,19 +64,19 @@ export const LoadGroup = async (
 // Criando desafio
 export const CreateChallenge = async (
   token: string,
-  group_id: number | undefined,
+  group_id:  string,
   title: string,
   description: string,
   type: string,
-  xp: number
+  data: any,
 ) => {
   const res = await axiosInstace.post(
-    `/api/group/${group_id}/challenge`,
+    `/api/challenge/group/${group_id}`,
     {
       title,
       description,
       type,
-      xp,
+      data
     },
     {
       headers: {
@@ -89,8 +89,8 @@ export const CreateChallenge = async (
 };
 
 // Listar desafios
-export const LoadChallenges = async (token: string, group_id: number) => {
-  const res = await axiosInstace.get(`/api/group/${group_id}/challenge`, {
+export const LoadChallenges = async (token: string, group_id: string) => {
+  const res = await axiosInstace.get(`/api/challenges/group/${group_id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -99,25 +99,13 @@ export const LoadChallenges = async (token: string, group_id: number) => {
   return res.data;
 };
 
-// Editar dados de um grupo
-export const EditGroupData = async (
-  token: string,
-  name: string | undefined,
-  description: string | undefined,
-  group_id: number
-) => {
-  const res = await axiosInstace.patch(
-    `/api/group/edit/${group_id}`,
-    {
-      name,
-      description,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+// Deletar desafio
+export const DeleteChallenge = async (token: string, challengeId: string) => {
+  const res = await axiosInstace.delete(`/api/challenge/${challengeId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
     }
-  );
+  });
 
   return res.data;
-};
+}

@@ -16,13 +16,13 @@ const PostTools = dynamic(
 );
 
 interface IResponsesProp {
-  comment_id: number;
-  openResps: number | null;
+  comment: string;
+  openResps: string | null;
   loadReps: boolean;
 }
 
 export const Responses = ({
-  comment_id,
+  comment,
   openResps,
   loadReps,
 }: IResponsesProp) => {
@@ -35,9 +35,9 @@ export const Responses = ({
   const handleListResponses = async () => {
     setLoading(true);
     try {
-      const data = await loadResponses(comment_id, token);
-      setResponses(data.data);
-      console.log(data.data)
+      const data = await loadResponses(comment, token);
+      setResponses(data.responses);
+      console.log(data.responses)
     } finally {
       setLoading(false);
     }
@@ -57,7 +57,7 @@ export const Responses = ({
         </span>
       ) : (
         Array.isArray(responses) &&
-        responses.length === 0 || responses === null ? (
+        responses?.length === 0 ? (
           <span className="flex justify-center items-center">Nenhuma resposta...</span>
         ) : (
           responses?.map((resp) => (
@@ -66,18 +66,18 @@ export const Responses = ({
               <div className="flex py-3 items-center gap-2">
                 <User2Icon className="size-6 md:size-8" />
                 <div className="text-sm flex flex-col font-semibold">
-                  <span>{resp.user.name}</span>
+                  <span>{resp.author.name}</span>
                   {/* <span className="font-light">
                     {convertDate(resp.created_at)}
                   </span> */}
                 </div>
               </div>
-              {resp.user.id === user?.id && (
+              {resp.author.id === user?.id && (
                 <PostTools
-                  ID={resp.id}
+                  id={resp.id}
                   type="editResponse"
                   content={resp.content}
-                  commentId={comment_id}
+                  commentId={comment}
                 />
               )}
             </span>

@@ -22,12 +22,15 @@ import { toast } from "sonner";
 
 import dynamic from "next/dynamic";
 
-const Markdown = dynamic(() => import("@uiw/react-md-editor").then(mod => mod.default.Markdown), {
-  ssr: false
-});
+const Markdown = dynamic(
+  () => import("@uiw/react-md-editor").then((mod) => mod.default.Markdown),
+  {
+    ssr: false,
+  }
+);
 
 interface IModalPostsProps {
-  group_id?: number | undefined;
+  group_id?: string;
   titleChallenge?: string;
   descriptionChallenge?: string;
   isEnterChallenge?: boolean;
@@ -47,6 +50,9 @@ export function ModalPosts({
   const [description, setDescription] = useState<string | undefined>("");
   const [type, setType] = useState("");
   const [xp, setXp] = useState(0);
+  const [quiz, setQuiz] = useState<any>(null);
+  const [timer, setTimer] = useState<number>(0);
+
   const [loading, setLoading] = useState(false);
 
   const { token } = useAuthContext();
@@ -69,18 +75,23 @@ export function ModalPosts({
     }
 
     try {
+      const dataType = {
+        xp,
+        quiz
+      }
       const data = await CreateChallenge(
         token,
         group_id,
         title,
         description,
         type,
-        xp
+        dataType
       );
+
+      console.log(data)
 
       await listChallenges(token, group_id);
 
-      toast.success(data.challenge);
     } catch (err) {
       toast.error("Erro ao criar desafio.");
     } finally {
@@ -104,7 +115,7 @@ export function ModalPosts({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] h-full">
         {isEnterChallenge && (
           <>
             <DialogHeader>
@@ -117,16 +128,22 @@ export function ModalPosts({
               <div>
                 <span>Descrição: </span>
                 <div className="border my-2.5 flex rounded-2xl p-5">
-                  <Markdown source={descriptionChallenge} style={{ whiteSpace: "pre-wrap", backgroundColor: "transparent" }} />
+                  <Markdown
+                    source={descriptionChallenge}
+                    style={{
+                      whiteSpace: "pre-wrap",
+                      backgroundColor: "transparent",
+                    }}
+                  />
                 </div>
               </div>
               <span
                 className="
-              px-3 py-1 w-[50px] rounded-full text-xs font-medium 
+              px-3 py-1 w-20 flex items-center justify-center rounded-full text-xs font-medium 
               bg-blue-500/10 text-blue-600 dark:text-blue-400 dark:bg-blue-400/10
             "
               >
-                {dataXP}XP
+                {dataXP} XP
               </span>
             </div>
 
@@ -139,47 +156,45 @@ export function ModalPosts({
         )}
 
         {!isEnterChallenge && (
-          <form onSubmit={handleSubmitCreate}>
-            <DialogHeader>
-              <DialogTitle>Criar um novo desafio</DialogTitle>
-            </DialogHeader>
-
-            <div className="grid gap-4 mt-3">
-              <div className="grid gap-3">
-                <Label htmlFor="titulo">Título</Label>
-                <Input
-                  id="titulo"
-                  placeholder="Título do desafio"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                />
+          <div className="h-full overflow-y-auto">
+            <form className="h-[100] px-2.5" onSubmit={handleSubmitCreate}>
+              <DialogHeader>
+                <DialogTitle>Criar um novo desafio</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-4 mt-3">
+                <div className="grid gap-3">
+                  <Label htmlFor="titulo">Título</Label>
+                  <Input
+                    id="titulo"
+                    placeholder="Título do desafio"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
+                </div>
+                <div className="grid gap-3">
+                  <MarkdownEditor
+                    setValue={setDescription}
+                    textAreaName="description"
+                    value={description}
+                    labelText="Conteúdo"
+                  />
+                </div>
+                <Selects setType={setType} setXp={setXp} setQuiz={setQuiz} />
               </div>
-
-              <div className="grid gap-3">
-                <MarkdownEditor
-                  setValue={setDescription}
-                  textAreaName="description"
-                  value={description}
-                  labelText="Conteúdo"
-                />
-              </div>
-
-              <Selects setType={setType} setXp={setXp} />
-            </div>
-
-            <DialogFooter>
-              <Button type="submit" className="w-full mt-5" variant="outline">
-                {loading ? (
-                  <span className="flex items-center gap-1.5">
-                    <Spinner />
-                    Criando...
-                  </span>
-                ) : (
-                  "Criar"
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
+              <DialogFooter>
+                <Button type="submit" className="w-full mt-5" variant="outline">
+                  {loading ? (
+                    <span className="flex items-center gap-1.5">
+                      <Spinner />
+                      Criando...
+                    </span>
+                  ) : (
+                    "Criar"
+                  )}
+                </Button>
+              </DialogFooter>
+            </form>
+          </div>
         )}
       </DialogContent>
     </Dialog>

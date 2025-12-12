@@ -15,29 +15,14 @@ import { FaRegCommentDots } from "react-icons/fa";
 import { useActionContext } from "@/contexts/ActionsContext";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Spinner } from "../ui/spinner";
-import { createComents, likeComment } from "@/api/posts";
-import { convertDate } from "@/services/formateDate";
-import { BiLike } from "react-icons/bi";
-import { User2Icon } from "lucide-react";
-import { Responses } from "./Responses/Responses";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { createComents } from "@/api/posts";
 import { useState } from "react";
-import { FormResponse } from "./FormResponse/FormResponse";
 import { LiaCommentsSolid } from "react-icons/lia";
-import dynamic from "next/dynamic";
-
-const Markdown = dynamic(() => import("@uiw/react-md-editor").then(mod => mod.default.Markdown), {
-  ssr: false
-});
-
-const PostTools = dynamic(
-  () => import("../PostTools/PostTools"),
-  { ssr: false }
-);
+import { CardComment } from "./cardComment/CardComment";
 
 
 interface ICommentsProps {
-  post_id: number;
+  post_id: string;
 }
 
 export function Comments({ post_id }: ICommentsProps) {
@@ -46,14 +31,9 @@ export function Comments({ post_id }: ICommentsProps) {
   const [loadingComments, setLoadingComments] = useState<boolean>(false);
   const [sending, setSending] = useState<boolean>(false);
 
-  const [openSendId, setOpenSendId] = useState<number | null>(null);
-  const [openRespId, setOpenRespId] = useState<number | null>(null);
-  const [loadResps, setLoadResp] = useState<boolean>(false);
-
   const { listComments, comment } = useActionContext();
   const { token } = useAuthContext();
 
-  const { user } = useAuthContext();
 
   // Criar comentário
   const handleSend = async () => {
@@ -68,22 +48,6 @@ export function Comments({ post_id }: ICommentsProps) {
     } finally {
       setSending(false);
     }
-  };
-
-  // Dar like nos comentários
-  const handleLike = async (comment_id: number) => {
-    const data = await likeComment(user?.id, comment_id, token);
-    console.log(data);
-  };
-
-  // Abrir respostas
-  const handleOpenResps = (comment_id: number) => {
-    setOpenRespId(openRespId === comment_id ? null : comment_id);
-  };
-
-  // Abrir Input para responder o comentário
-  const handleOpenSend = (comment_id: number) => {
-    setOpenSendId(openSendId === comment_id ? null : comment_id);
   };
 
   return (
@@ -123,96 +87,14 @@ export function Comments({ post_id }: ICommentsProps) {
             </div>
           ) : (
             <>
-              {comment?.length === 0 || comment === null && (
+              {comment?.length === 0 && (
                 <p className="text-sm text-muted-foreground">
                   Nenhum comentário ainda.
                 </p>
               )}
 
-              {comment?.map((c, index) => (
-                <div
-                  key={`${c.id}-${index}`}
-                  className="p-3 rounded-lg bg-secondary"
-                >
-                  <span className="flex justify-between">
-                    <div className="flex py-3 items-center gap-2">
-                      <User2Icon className="size-6 md:size-8" />
-                      <div className="text-sm flex flex-col font-semibold">
-                        <span>{c.user.name}</span>
-                        <span className="font-light">
-                          {convertDate(c.created_at)}
-                        </span>
-                      </div>
-                    </div>
-                    {c.user.id === user?.id && (
-                      <PostTools
-                        ID={c.id}
-                        type="editComment"
-                        content={c.content}
-                        post_id={post_id}
-                      />
-                    )}
-                  </span>
-                  <Markdown source={c.content} style={{ whiteSpace: "pre-wrap", backgroundColor: "transparent" }} />
-
-                  {/* Botões de (like, responder e respostas) */}
-                  <div className="mt-5 flex flex-col md:flex-row items-start md:items-center">
-                    <div className="flex">
-                      <Button
-                        variant={"ghost"}
-                        className="cursor-pointer"
-                        onClick={() => handleLike(c.id)}
-                      >
-                        <BiLike className="size-6" />
-                      </Button>
-                      <Button
-                        variant={"ghost"}
-                        className="cursor-pointer"
-                        onClick={() => handleOpenSend(c.id)}
-                      >
-                        {openSendId === c.id ? (
-                          <span>Cancelar</span>
-                        ) : (
-                          <span>Responder</span>
-                        )}
-                      </Button>
-                    </div>
-
-                    {/* Input para responder comentário */}
-                    {openSendId === c.id && (
-                      <FormResponse
-                        openSend={openSendId}
-                        comment={c}
-                      />
-                    )}
-                  </div>
-
-                  {/* Respostas */}
-                  <hr />
-                  <Button
-                    variant={"ghost"}
-                    className="px-4 mt-3 flex cursor-pointer hover:bg-blue-500 hover:text-white"
-                    onClick={() => { 
-                      handleOpenResps(c.id);
-                      setLoadResp((prev) => !prev)
-                    }}
-                  >
-                    <span className="flex items-center gap-2">
-                      Respostas
-                      {openRespId === c.id ? (
-                        <IoIosArrowUp />
-                      ) : (
-                        <IoIosArrowDown />
-                      )}
-                    </span>
-                  </Button>
-                  {
-                    openRespId === c.id && (
-                      <Responses loadReps={loadResps} openResps={openRespId} comment_id={c.id} />
-                    )
-                  }
-                  
-                </div>
+              {comment?.map((c) => (
+                <CardComment key={c.id} author={c.author} comment={c} content={c.content} createdAt={c.createdAt} id={c.id} liked={c.liked} likes={c.likes} postId={post_id} />
               ))}
             </>
           )}

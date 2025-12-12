@@ -1,21 +1,13 @@
 export interface IUser {
-  id: number;
+  id?: string;
   name: string;
   name_user: string;
   email: string;
+  userId: string;
   role: string;
   bio: string;
-}
-
-interface Like {
-  ID: number;
-  UserId: number;
-  PostId: number;
-}
-
-export interface ITag {
-  ID: number;
-  Name: string;
+  avatarUrl: string;
+  xp: number;
 }
 
 export type DialogType =
@@ -27,38 +19,39 @@ export type DialogType =
   | "createGroup";
 
 export interface IPost {
-  id: number;
+  id: string;
   title: string;
   content: string;
-  created_at: string;
-  user: IUser;
-  likes_count: number;
-  Likes: Like[];
-  liked_by_me: boolean;
-  tags: ITag[];
+  author: IUser;
+  likes: number;
+  createdAt: string;
+  liked: boolean;
+  saved: boolean;
 }
 
+
 export interface IComment {
-  id: number;
-  user: IUser;
-  Likes: number | null;
+  id: string;
+  author: IUser;
+  likes: number;
   content: string;
-  created_at: string;
+  liked: boolean;
+  createdAt: string;
 }
 
 export interface IResponsesComment {
-  id: number;
-  user: IUser;
-  comment_id: number;
+  id: string;
+  author: IUser;
+  comment: string;
   content: string;
-  created_at: string;
+  createdAt: string;
 }
 
 export interface IStudent {
-  UserID: number;
-  User: IUser;
-  course: string;
-  matricula: string;
+  id: string;
+  name: string;
+  email: string;
+  role: string;
 }
 
 // Grupos
@@ -69,34 +62,33 @@ type Teacher = {
 };
 
 type Members = {
-  id: number;
-  student_id: number;
-  student: {
-    id: number;
-    name: string;
-    email: string;
-    bio: string;
-    role: string;
-  };
+  id: string;
+  name: string;
+  email: string;
+  bio: string;
+  role: string;
+  
 };
 
 export interface IGroup {
-  id: string;
-  nome: string;
-  Description: string;
+  _id: string;
+  name: string;
+  description: string;
   teacher_id: number;
-  teacher: Teacher;
-  user: IUser;
+  author: IUser;
   members: Members[];
 }
 
+type data = {
+  xp: number
+}
+
 export interface IChallenge {
-  id: number;
+  id: string;
   title: string;
   description: string;
-  teacher: Teacher;
+  author: IUser;
   type: string;
-  xp: number;
-  group_id: number;
-  teacher_id: number;
+  data: data;
+  group_id: string;
 }
