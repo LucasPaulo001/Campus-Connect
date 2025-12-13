@@ -21,5 +21,6 @@ router.use(challengeRouter);
 router.use(studentRouter);
 router.use(followRouter);
 router.use(responseChallengeRouter);
+router.use(notificationsRouter);
 
 export default router;
