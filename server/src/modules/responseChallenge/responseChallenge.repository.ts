@@ -12,7 +12,11 @@ export const ResponseChallengeRepository = {
     },
 
     update(id: string, data: Partial<TResponseChallenge>){
-        return responseChallengeModel.findByIdAndUpdate(id);
+        return responseChallengeModel.findByIdAndUpdate(id, data, { new: true });
+    },
+
+    findAll(){
+        return responseChallengeModel.find();
     }
 
 }

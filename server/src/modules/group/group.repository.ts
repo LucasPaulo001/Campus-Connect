@@ -12,7 +12,7 @@ export const GroupRepository = {
       },
     }).populate({
       path: "members",
-      select: "name email role"
+      select: "name email role xp"
     });
   },
 

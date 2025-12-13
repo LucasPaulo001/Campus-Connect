@@ -79,7 +79,9 @@ export async function FeedBackResponse(responseChaId: string, teacherId: string,
     }
 
     const data = {
-        feedback
+        feedback,
+        xpReceive: challenge.data?.xp
+
     }
 
     await ResponseChallengeRepository.update(responseChaId, data);

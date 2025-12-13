@@ -29,7 +29,7 @@ export async function LoginController(req: CustomRequest, res: Response) {
 
     const result = await LoginService(email, password);
 
-    res.status(200).json(result);
+    res.status(200).json({id: result.id, token: result.token});
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

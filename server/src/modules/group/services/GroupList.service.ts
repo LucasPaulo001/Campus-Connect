@@ -30,12 +30,12 @@ export async function ListGroupByTeacherService(userId: string) {
       description: group.description,
       author: user
         ? {
-            id: author._id,
-            name: author.user.name,
-            email: author.user.email,
-            role: author.user.role,
-            userId: author.user._id,
-          }
+          id: author._id,
+          name: author.user.name,
+          email: author.user.email,
+          role: author.user.role,
+          userId: author.user._id,
+        }
         : null,
       members: group.members,
       createdAt: group.createdAt,
@@ -64,30 +64,37 @@ export async function ListGroupByUserService(userId: string) {
 }
 
 // Listar detalhes do grupo
-export async function ListGroupDetailService(groupId: string, userId: string){
+export async function ListGroupDetailService(groupId: string, userId: string) {
 
   const author = await TeacherRepository.findByUser(userId);
 
   const user = await UserRepository.findById(userId);
 
-  if(!author || !user){
+  if (!author || !user) {
     throw new Error("Usuário não encontrado.");
   }
 
   const group = await GroupRepository.findById(groupId);
 
-  if(!group){
+  if (!group) {
     throw new Error("Grupo não encontrado.");
   }
 
   const isUserInGroup = group.members?.some(userId => userId._id.equals(user._id));
 
-  if(!isUserInGroup){
+  if (!isUserInGroup) {
     throw new Error("Usuário não participa do grupo.");
   }
 
   const authorRes = group.author as unknown as TAuthor;
   const userRes = authorRes.user;
+
+
+  const members = group.members ?? [];
+
+  const sortedMembers = [...members].sort(
+    (a: any, b: any) => (b.xp ?? 0) - (a.xp ?? 0)
+  );
 
 
   const dataFormated = {
@@ -100,10 +107,12 @@ export async function ListGroupDetailService(groupId: string, userId: string){
       email: user.email,
       role: user.role
     } : null,
-    members: group.members?.map((m: any) => ({
+    members: sortedMembers.map((m: any, index: number) => ({
+      position: index + 1,
       id: m._id,
       name: m.name,
       email: m.email,
+      xp: m.xp,
       role: m.role
     }))
   }

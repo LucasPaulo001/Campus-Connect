@@ -102,24 +102,28 @@ export async function ProfileEditService(id: string, updates: DataUpdates) {
     throw new Error("Usuário não encontrado.");
   }
 
+  const cleanUpdates: Partial<DataUpdates> = {};
+
   if (updates.nameUser && updates.nameUser !== user.nameUser) {
     const existsNameUser = await UserRepository.findByUserName(
       updates.nameUser
     );
     if (existsNameUser) throw new Error("Nome de usuário já está em uso.");
+    cleanUpdates.nameUser = updates.nameUser
   }
 
-  if (!updates.name) {
-    throw new Error("Nome é obrigatório.");
-  }
 
-  if (updates.name && updates.name === user.name) {
-    throw new Error("Informe um valor diferente.");
+  if (updates.name && updates.name !== user.name) {
+    cleanUpdates.name = updates.name
   }
 
   if (updates.password) {
     const salt = await bcrypt.genSalt();
-    updates.password = await bcrypt.hash(updates.password, salt);
+    cleanUpdates.password = await bcrypt.hash(updates.password, salt);
+  }
+
+  if (Object.keys(cleanUpdates).length === 0) {
+    throw new Error("Nenhuma alteração foi feita.");
   }
 
   const updatedUser = await UserRepository.update(id, updates);
