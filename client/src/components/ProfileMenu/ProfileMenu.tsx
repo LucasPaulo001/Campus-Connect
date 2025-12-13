@@ -70,7 +70,9 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
                   </div>
                 )}
 
-                <span className="font-semibold">{user?.name_user}</span>
+                <div className="flex justify-between">
+                  <span className="font-semibold">{user?.name_user}</span>
+                </div>
                 <span className="text-sm text-muted-foreground">
                   {user?.email}
                 </span>
@@ -84,15 +86,19 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
                 <hr />
                 <span className="mt-3">
                   <strong>Biografia:</strong>
-                  {user?.bio === "" || user?.bio === undefined
+                  {user?.biography === "" || user?.biography === undefined
                     ? " Sem biografia"
-                    : " " + user?.bio}
+                    : " " + user?.biography}
                 </span>
               </>
             )}
           </div>
         </SheetHeader>
         <hr />
+        <div className="flex justify-around">
+          <span>Seguidores: {user?.followers}</span>
+          <span>Seguindo: {user?.following}</span>
+        </div>
         <div className="mt-6 flex flex-col gap-3">
           {items.map((item, index) => (
             <div key={index} className="grid gap-3">

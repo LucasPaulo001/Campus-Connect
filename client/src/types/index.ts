@@ -5,8 +5,10 @@ export interface IUser {
   email: string;
   userId: string;
   role: string;
-  bio: string;
+  biography: string;
   avatarUrl: string;
+  followers: number;
+  following: number;
   xp: number;
 }
 

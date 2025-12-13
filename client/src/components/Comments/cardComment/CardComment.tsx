@@ -8,7 +8,7 @@ import { convertDate } from "@/services/formateDate";
 import { useAuthContext } from "@/contexts/AuthContext";
 import dynamic from "next/dynamic";
 import { likeComment } from "@/api/posts";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Responses } from "../Responses/Responses";
 import Image from "next/image";
 
@@ -32,6 +32,7 @@ interface ICardCommentProps {
   liked: boolean;
   postId: string;
   comment: any;
+  postAuthor: IUser
 }
 
 export const CardComment = ({
@@ -43,6 +44,7 @@ export const CardComment = ({
   liked,
   likes,
   author,
+  postAuthor
 }: ICardCommentProps) => {
   const [openSendId, setOpenSendId] = useState<string | null>(null);
   const [openRespId, setOpenRespId] = useState<string | null>(null);
@@ -88,11 +90,11 @@ export const CardComment = ({
       <div className="p-3 rounded-lg bg-secondary">
         <span className="flex justify-between">
           <div className="flex py-3 items-center gap-2">
-            {user?.avatarUrl ? (
+            {author.id === user?.id ? (
               <div className="flex justify-center my-3.5 items-center h-20">
                 <Image
                   className="rounded-full"
-                  src={user.avatarUrl}
+                  src={user!.avatarUrl}
                   width={60}
                   height={60}
                   alt="perfil"

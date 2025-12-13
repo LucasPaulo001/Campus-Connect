@@ -5,6 +5,7 @@ export const EditData = async (
   name: string | undefined,
   nameUser: string | undefined,
   biography: string,
+  avatarUrl: string,
   token: string
 ) => {
   const res = await axiosInstace.patch(
@@ -13,6 +14,7 @@ export const EditData = async (
       name,
       nameUser,
       biography,
+      avatarUrl
     },
     {
       headers: {

@@ -61,11 +61,7 @@ export const NavbarClient = () => {
       onClick: () => router.push("posts-saved"),
     },
   ];
-  const { notification } = useActionContext();
-  notification.forEach((n: any) => {
-    toast(n.message);
-  });
-
+  
   // Items para o desktop
   const itemsDesktop = [
     {

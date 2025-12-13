@@ -37,7 +37,7 @@ export function Selects({ setType, setXp, setQuiz }: ISelectsProps) {
         <SelectContent>
           <SelectGroup>
             <SelectLabel>Tipo de desafio</SelectLabel>
-            <SelectItem value="desafio_xp">Desafio XP</SelectItem>
+            <SelectItem value="xp">Desafio XP</SelectItem>
             <SelectItem value="quiz">Quiz</SelectItem>
             <SelectItem value="timer">Timer</SelectItem>
           </SelectGroup>
@@ -45,7 +45,7 @@ export function Selects({ setType, setXp, setQuiz }: ISelectsProps) {
       </Select>
 
       {/* CAMPOS DINÂMICOS */}
-      {type === "desafio_xp" && <XpFields setXp={setXp} />}
+      {type === "xp" && <XpFields setXp={setXp} />}
       {type === "quiz" && <QuizFields setQuiz={setQuiz} />}
     </div>
   );
