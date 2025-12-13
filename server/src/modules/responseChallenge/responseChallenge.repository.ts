@@ -5,6 +5,14 @@ export const ResponseChallengeRepository = {
 
     create(data: TResponseChallenge){
         return responseChallengeModel.create(data);
+    },
+
+    findById(id: string){
+        return responseChallengeModel.findById(id);
+    },
+
+    update(id: string, data: Partial<TResponseChallenge>){
+        return responseChallengeModel.findByIdAndUpdate(id);
     }
 
 }
