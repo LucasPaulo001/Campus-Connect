@@ -3,7 +3,8 @@ import { UserRepository } from "../../users/user.repository.js";
 import { CommentRepository } from "../comment.repository.js";
 import { PostRepository } from "../../posts/post.repository.js";
 import { ToggleLike } from "../../../services/Like.service.js";
-import { io } from "../../../sockets/socket.js"
+import { io } from "../../../sockets/socket.js";
+import { isAuthor } from "../../posts/services/PostAction.service.js";
 
 // Criar comentário
 export async function CreateCommentService(
@@ -38,14 +39,16 @@ export async function CreateCommentService(
 
   const newComment = await CommentRepository.create(data);
 
-  if (post.author.toString() !== user._id.toString()){
-    io.to(post.author.toString()).emit("notification", {
-      type: "comment",
-      message: "Alguém comentou na sua postagem.",
-      postId,
-      fromUser: user._id,
-      createdAt: new Date()
-    })
+  if (isAuthor(post.author)) {
+    if (post.author.userId.toString() !== user._id.toString()) {
+      io.to(post.author.toString()).emit("notification", {
+        type: "comment",
+        message: "Alguém comentou na sua postagem.",
+        postId,
+        fromUser: user._id,
+        createdAt: new Date(),
+      });
+    }
   }
 
   return {
@@ -119,27 +122,26 @@ export async function EditCommentService(
 
 // Like em comentários
 export async function LikeCommentService(userId: string, commentId: string) {
-
   const comment = await CommentRepository.findById(commentId);
 
   const user = await UserRepository.findById(userId);
 
-  if (!user){
+  if (!user) {
     throw new Error("Usuário não encontrado.");
   }
 
-  if (!comment){
+  if (!comment) {
     throw new Error("Comentário não encontrado.");
   }
 
-  if (comment.author._id.toString() !== user._id.toString()){
+  if (comment.author._id.toString() !== user._id.toString()) {
     io.to(comment.author.toString()).emit("notification", {
       type: "like_comment",
       message: "Alguém curtiu seu comentário.",
       commentId,
       fromUser: user._id,
-      createdAt: new Date()
-    })
+      createdAt: new Date(),
+    });
   }
   return ToggleLike({
     userId,

@@ -15,7 +15,7 @@ export const PostRepository = {
   },
 
   findById(id: string) {
-    return postModel.findById(id);
+    return postModel.findById(id).populate("author");
   },
 
   findPostByAuthor(id: string) {

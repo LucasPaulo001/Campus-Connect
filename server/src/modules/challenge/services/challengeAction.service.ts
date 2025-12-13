@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import { GroupRepository } from "../../group/group.repository.js";
 import { TeacherRepository } from "../../teacher/teacher.repository.js";
 import { ChallengeRepository } from "../challenge.repository.js";
+import { UserRepository } from "../../users/user.repository.js";
 
 type TDataCreate = {
   authorId: string;
@@ -59,23 +60,61 @@ export async function CreateChallengeService({
 }
 
 // Deletar desafio
-export async function DeleteChallengeService(userId: string, challengeId: string){
-
+export async function DeleteChallengeService(
+  userId: string,
+  challengeId: string
+) {
   const teacher = await TeacherRepository.findByUser(userId);
 
-  if(!teacher) throw new Error("Professor não encontrado.");
+  if (!teacher) throw new Error("Professor não encontrado.");
 
   const challenge = await ChallengeRepository.findById(challengeId);
 
-  if(!challenge) throw new Error("Desafio não encontrado.");
+  if (!challenge) throw new Error("Desafio não encontrado.");
 
-  if(challenge.author.toString() !== teacher._id.toString()){
+  if (challenge.author.toString() !== teacher._id.toString()) {
     throw new Error("Permissões insuficientes.");
   }
 
   await ChallengeRepository.delete(challengeId);
 
   return {
-    msg: "Desafio deletado com sucesso."
+    msg: "Desafio deletado com sucesso.",
+  };
+}
+
+// Respondendo o Challenge
+export async function ResponseChallengeQuizService(
+  userId: string,
+  challengeId: string,
+  questionIndex: number,
+  responseIndex: number
+) {
+  const user = await UserRepository.findById(userId);
+
+  if (!user) {
+    throw new Error("Usuário não encontrado.");
+  }
+
+  const challenge = await ChallengeRepository.findById(challengeId);
+
+  if (!challenge) {
+    throw new Error("Desafio não encontrado.");
+  }
+
+  if (challenge.type === "quiz") {
+    const question = challenge.data?.quiz?.questions?.[questionIndex];
+
+    if (!question) throw new Error("Questão não encontrada.");
+
+    const isCorrect = question.correct === responseIndex;
+
+    if (isCorrect) {
+      const updatedUser = await UserRepository.updateXp(user._id, 10);
+      return { msg: "Parabéns, você acertou.", newXp: updatedUser?.xp };
+    } else {
+      return { msg: "Resposta incorreta" };
+    }
+
   }
 }

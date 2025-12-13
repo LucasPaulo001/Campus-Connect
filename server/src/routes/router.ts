@@ -8,6 +8,7 @@ import groupRouter from "../modules/group/group.routes.js";
 import challengeRouter from "../modules/challenge/challenge.routes.js";
 import studentRouter from "../modules/student/student.routes.js";
 import followRouter from "../modules/follow/follow.routes.js";
+import responseChallengeRouter from "../modules/responseChallenge/responseChallenge.routes.js";
 const router = Router();
 
 router.use(userRouter);
@@ -19,5 +20,6 @@ router.use(groupRouter);
 router.use(challengeRouter);
 router.use(studentRouter);
 router.use(followRouter);
+router.use(responseChallengeRouter);
 
 export default router;

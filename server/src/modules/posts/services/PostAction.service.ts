@@ -153,6 +153,10 @@ export async function EditPostService(
   };
 }
 
+export function isAuthor(obj: any): obj is { userId: Types.ObjectId } {
+  return obj && typeof obj === "object" && "userId" in obj;
+}
+
 // Curtir postagens
 export async function LikePostService(postId: string, userId: string) {
   const user = await UserRepository.findById(userId);
@@ -175,18 +179,20 @@ export async function LikePostService(postId: string, userId: string) {
     userRepository: UserRepository,
   });
 
-  if (result.liked && post.author.toString() !== user._id.toString()) {
-    io.to(post.author.toString()).emit("notification", {
-      type: "like_post",
-      message: "Alguém curtiu sua postagem.",
-      postId,
-      fromUser: {
-        id: user._id,
-        name: user.name,
-        avatar: user.avatarUrl,
-      },
-      createdAt: new Date(),
-    });
+  if (isAuthor(post.author)) {
+    if (result.liked && post.author.userId.toString() !== user._id.toString()) {
+      io.to(post.author.toString()).emit("notification", {
+        type: "like_post",
+        message: "Alguém curtiu sua postagem.",
+        postId,
+        fromUser: {
+          id: user._id,
+          name: user.name,
+          avatar: user.avatarUrl,
+        },
+        createdAt: new Date(),
+      });
+    }
   }
 
   return result;

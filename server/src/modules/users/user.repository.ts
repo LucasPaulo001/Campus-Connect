@@ -41,4 +41,8 @@ export const UserRepository = {
   create(data: TUser) {
     return userModel.create(data);
   },
+
+  updateXp(id: string, value: number){
+    return userModel.findByIdAndUpdate(id, { $inc: { xp: value } });
+  }
 };
