@@ -3,6 +3,7 @@ import { UserRepository } from "../../users/user.repository.js";
 import { TeacherRepository } from "../../teacher/teacher.repository.js";
 import { PostRepository } from "../post.repository.js";
 import { ToggleLike } from "../../../services/Like.service.js";
+import { io } from "../../../sockets/socket.js";
 
 export type TCreatePostData = {
   title: string;
@@ -97,7 +98,7 @@ export async function SavePostService(postId: string, userId: string) {
     );
   }
 
-  const savedByMy = user.postsSaveds?.some(id => id.equals(postId));
+  const savedByMy = user.postsSaveds?.some((id) => id.equals(postId));
 
   await user.save();
 
@@ -106,7 +107,7 @@ export async function SavePostService(postId: string, userId: string) {
       ? "Postagem removida dos salvos"
       : "Postagem salva com sucesso.",
     post: post,
-    saved: savedByMy
+    saved: savedByMy,
   };
 }
 
@@ -154,11 +155,39 @@ export async function EditPostService(
 
 // Curtir postagens
 export async function LikePostService(postId: string, userId: string) {
-  return ToggleLike({
+  const user = await UserRepository.findById(userId);
+
+  if (!user) {
+    throw new Error("Usuário não encontrado.");
+  }
+
+  const post = await PostRepository.findById(postId);
+
+  if (!post) {
+    throw new Error("Postagem não encontrada.");
+  }
+
+  const result = await ToggleLike({
     userId,
     entityName: "Postagem",
     entityId: postId,
     entityRepository: PostRepository,
     userRepository: UserRepository,
   });
+
+  if (result.liked && post.author.toString() !== user._id.toString()) {
+    io.to(post.author.toString()).emit("notification", {
+      type: "like_post",
+      message: "Alguém curtiu sua postagem.",
+      postId,
+      fromUser: {
+        id: user._id,
+        name: user.name,
+        avatar: user.avatarUrl,
+      },
+      createdAt: new Date(),
+    });
+  }
+
+  return result;
 }
