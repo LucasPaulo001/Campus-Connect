@@ -9,6 +9,7 @@ import challengeRouter from "../modules/challenge/challenge.routes.js";
 import studentRouter from "../modules/student/student.routes.js";
 import followRouter from "../modules/follow/follow.routes.js";
 import responseChallengeRouter from "../modules/responseChallenge/responseChallenge.routes.js";
+import notificationRouter from "../modules/notification/notification.routes.js";
 const router = Router();
 
 router.use(userRouter);
