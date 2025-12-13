@@ -5,6 +5,8 @@ import { PostRepository } from "../../posts/post.repository.js";
 import { ToggleLike } from "../../../services/Like.service.js";
 import { io } from "../../../sockets/socket.js";
 import { isAuthor } from "../../posts/services/PostAction.service.js";
+import { NotificationCreate } from "../../../services/Notification.service.js";
+import { NotificationType } from "../../../@types/notification/notificatio.type.js";
 
 // Criar comentário
 export async function CreateCommentService(
@@ -41,6 +43,11 @@ export async function CreateCommentService(
 
   if (isAuthor(post.author)) {
     if (post.author.userId.toString() !== user._id.toString()) {
+
+      const userToNotify = new Types.ObjectId(post.author.userId._id);
+
+      NotificationCreate(userToNotify, "Alguém comentou na sua postagem", NotificationType.COMMENT);
+
       io.to(post.author.toString()).emit("notification", {
         type: "comment",
         message: "Alguém comentou na sua postagem.",

@@ -4,6 +4,9 @@ import { TeacherRepository } from "../../teacher/teacher.repository.js";
 import { PostRepository } from "../post.repository.js";
 import { ToggleLike } from "../../../services/Like.service.js";
 import { io } from "../../../sockets/socket.js";
+import { NotificationRepository } from "../../notification/notificatioin.repository.js";
+import { NotificationCreate } from "../../../services/Notification.service.js";
+import { NotificationType } from "../../../@types/notification/notificatio.type.js";
 
 export type TCreatePostData = {
   title: string;
@@ -153,6 +156,7 @@ export async function EditPostService(
   };
 }
 
+// Tipagem do author
 export function isAuthor(obj: any): obj is { userId: Types.ObjectId } {
   return obj && typeof obj === "object" && "userId" in obj;
 }
@@ -181,6 +185,13 @@ export async function LikePostService(postId: string, userId: string) {
 
   if (isAuthor(post.author)) {
     if (result.liked && post.author.userId.toString() !== user._id.toString()) {
+
+      // Criando notificação no banco
+      const authorObjectId = new Types.ObjectId(post.author.userId._id);
+
+      NotificationCreate(authorObjectId, "Alguém curtiu sua postagem", NotificationType.LIKE);
+
+      //Emitindo notificação no socket
       io.to(post.author.toString()).emit("notification", {
         type: "like_post",
         message: "Alguém curtiu sua postagem.",

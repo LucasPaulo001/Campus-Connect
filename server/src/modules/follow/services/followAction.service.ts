@@ -1,6 +1,8 @@
 import { Types } from "mongoose";
 import { UserRepository } from "../../users/user.repository.js";
 import { FollowRepository } from "../follow.repository.js";
+import { NotificationCreate } from "../../../services/Notification.service.js";
+import { NotificationType } from "../../../@types/notification/notificatio.type.js";
 
 // Seguir outro usuário
 export async function FollowService(followerId: string, followingId: string) {
@@ -36,6 +38,8 @@ export async function FollowService(followerId: string, followingId: string) {
   }
 
   const newFollow = await FollowRepository.create(data);
+
+  NotificationCreate(followingObjectId, "Alguém começou a seguir você", NotificationType.FOLLOW);
 
   return {
     msg: "Conexão feita com sucesso.",
