@@ -59,7 +59,7 @@ export async function CreateCommentService(
 
   return {
     msg: "Comentário adicionado.",
-    newComment,
+    comment: newComment,
   };
 }
 
