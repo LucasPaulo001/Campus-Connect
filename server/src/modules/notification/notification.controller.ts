@@ -20,10 +20,16 @@ export async function MarkNotificationAsReadController(
   req: CustomRequest,
   res: Response
 ) {
-  const userId = req.user._id;
-  const { id } = req.params;
+  try {
+    const userId = req.user._id;
+    const { id } = req.params;
 
-  const result = await MarkNotificationAsRead(userId, id);
+    const result = await MarkNotificationAsRead(id, userId);
 
-  res.json(result);
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({
+      error: err,
+    });
+  }
 }
