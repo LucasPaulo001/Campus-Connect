@@ -86,7 +86,11 @@ export function Sidebar() {
         {user?.role === "estudante" && (
           <CommandGroup>
             <CommandItem>
-              <span>Minhas turmas</span>
+              <Link
+                href={"/groups"}
+              >
+                <span>Minhas turmas</span>
+              </Link>
             </CommandItem>
           </CommandGroup>
         )}

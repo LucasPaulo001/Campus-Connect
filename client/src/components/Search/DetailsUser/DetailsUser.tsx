@@ -62,7 +62,7 @@ export function DetailsUser({ user }: DetailsUserProps) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] overflow-y-auto z-160">
         <DialogHeader>
           <DialogTitle>Perfil</DialogTitle>
           <DialogDescription>
@@ -71,7 +71,7 @@ export function DetailsUser({ user }: DetailsUserProps) {
           <span className="text-sm text-muted-foreground">{user.role}</span>
         </DialogHeader>
 
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col overflow-y-auto items-center gap-4">
           {user.avatarUrl ? (
             <Image
               src={user.avatarUrl}

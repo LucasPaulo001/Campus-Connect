@@ -4,12 +4,10 @@ import { LoadGroups } from "@/api/groups";
 import { LoadingPage } from "@/components/Loading/LoadingPage";
 import { Sidebar } from "@/components/Sidebar/Sidebar";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { IGroup, IUser } from "@/types";
+import { IGroup } from "@/types";
 import { GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
-
 
 export default function Groups() {
   const [myGroups, setMyGroups] = useState<IGroup[] | null>(null);
@@ -31,23 +29,31 @@ export default function Groups() {
     handleList();
   }, []);
 
-  if(loading) {
-    return <LoadingPage />
+  if (loading) {
+    return <LoadingPage />;
   }
 
   return (
     <div className="flex justify-between">
-        <div className="hidden md:flex sticky top-25 h-full">
-            <Sidebar />
-        </div>
-      <div className="w-screen">
+      <div className="hidden md:flex sticky top-25 h-full">
+        <Sidebar />
+      </div>
+      {myGroups?.length === 0 ? (
+        <span className="flex items-center justify-center w-full p-3">
+          Você não está em nenhuma turma
+        </span>
+      ) : (
+        <div className="w-screen">
           <h1 className="text-center text-2xl my-5">Listagem de grupos</h1>
           <div className="grid grid-cols-1 w-100% sm:grid-cols-2 justify-items-center items-center md:grid-cols-2 gap-4">
-            {
-              myGroups?.map((group) => (
-                <Link key={group._id} className="w-full" href={`/groups/${group._id}`}>
-                  <div
-                    className="p-4
+            {myGroups?.map((group) => (
+              <Link
+                key={group._id}
+                className="w-full"
+                href={`/groups/${group._id}`}
+              >
+                <div
+                  className="p-4
                           flex flex-col items-center justify-center
                           mx-3.5
                           cursor-pointer
@@ -60,18 +66,18 @@ export default function Groups() {
                           w-[90%]
                           dark:bg-gray-800
                           h-full"
-                  >
-                    <span>
-                      <GraduationCap />
-                    </span>
-                    <h2 className="font-bold">{group.name}</h2>
-                    <p>{group.description}</p>
-                  </div>
-                </Link>
-              ))
-            }
+                >
+                  <span>
+                    <GraduationCap />
+                  </span>
+                  <h2 className="font-bold">{group.name}</h2>
+                  <p>{group.description}</p>
+                </div>
+              </Link>
+            ))}
           </div>
-      </div>
+        </div>
+      )}
     </div>
   );
 }

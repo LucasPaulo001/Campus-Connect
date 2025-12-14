@@ -36,6 +36,10 @@ export const NavbarClient = () => {
       onClick: () => router.push("/explorer"),
     },
     {
+      item: "Pesquisar",
+      icon: <Search />,
+    },
+    {
       item: "Mensagens",
       icon: <MessageCircle />,
       onClick: () => router.push("/messages"),

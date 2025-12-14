@@ -19,7 +19,12 @@ import React, { useState } from "react";
 import { Spinner } from "../ui/spinner";
 import { DetailsUser } from "./DetailsUser/DetailsUser";
 
-export function SearchPerson() {
+interface ISearchPersonProps {
+  open?: boolean;
+  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export function SearchPerson({ open, setOpen }: ISearchPersonProps) {
   const [users, setUsers] = useState<IUser[]>([]);
   const [query, setQuery] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -40,17 +45,17 @@ export function SearchPerson() {
   };
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button
           variant="ghost"
-          className="flex h-full hover:bg-blue-600! cursor-pointer gap-0 flex-col"
+          className="flex hover:bg-blue-600! cursor-pointer gap-0 flex-col"
         >
           <Search className="size-6" />
           <span>Pesquisar</span>
         </Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent className="z-150 h-full overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Buscar usuários</SheetTitle>
           <SheetDescription>Busque por usuários e conecte-se</SheetDescription>

@@ -16,6 +16,7 @@ import React, { useState } from "react";
 import { BiExit } from "react-icons/bi";
 import { Spinner } from "../ui/spinner";
 import Image from "next/image";
+import { SearchPerson } from "../Search/Search";
 
 type listItems = {
   item: string;
@@ -33,15 +34,18 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
   const { logout, user, loading } = useAuthContext();
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const handleRedirect = async (item: listItems) => {
-    if (item.onClick) {
-      item.onClick();
-    }
+  const [openSearch, setOpenSearch] = useState<boolean>(false);
 
+  const handleRedirect = async (item: listItems) => {
+    if (item.item === "Pesquisar") {
+      setOpenSearch(true);
+    }
+    if (item.onClick) item.onClick();
     setIsOpen(false);
   };
 
   return (
+    <>
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <div className="cursor-pointer w-[100px] flex flex-col items-center justify-center">
@@ -110,6 +114,7 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
           <span>Seguidores: {user?.followers}</span>
           <span>Seguindo: {user?.following}</span>
         </div>
+          <SearchPerson open={openSearch} setOpen={setOpenSearch} />
         <div className="mt-6 flex flex-col gap-3">
           {items.map((item, index) => (
             <div key={index} className="grid gap-3">
@@ -137,5 +142,6 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
         </SheetFooter>
       </SheetContent>
     </Sheet>
+    </>
   );
 }
