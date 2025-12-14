@@ -27,7 +27,7 @@ export default function ProfileEdit() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const data = await EditData(newName, newNameUser, biography, token);
+    const data = await EditData(newName, newNameUser, biography, token, avatar);
     await loadProfile();
     console.log(data);
   };

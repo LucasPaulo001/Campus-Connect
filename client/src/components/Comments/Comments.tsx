@@ -19,13 +19,15 @@ import { createComents } from "@/api/posts";
 import { useState } from "react";
 import { LiaCommentsSolid } from "react-icons/lia";
 import { CardComment } from "./cardComment/CardComment";
+import { IUser } from "@/types";
 
 
 interface ICommentsProps {
   post_id: string;
+  postAuthor: IUser
 }
 
-export function Comments({ post_id }: ICommentsProps) {
+export function Comments({ post_id, postAuthor }: ICommentsProps) {
   const [text, setText] = useState("");
   const [open, setOpen] = useState(false);
   const [loadingComments, setLoadingComments] = useState<boolean>(false);
@@ -94,7 +96,7 @@ export function Comments({ post_id }: ICommentsProps) {
               )}
 
               {comment?.map((c) => (
-                <CardComment key={c.id} author={c.author} comment={c} content={c.content} createdAt={c.createdAt} id={c.id} liked={c.liked} likes={c.likes} postId={post_id} />
+                <CardComment key={c.id} author={c.author} comment={c} content={c.content} createdAt={c.createdAt} id={c.id} liked={c.liked} likes={c.likes} postId={post_id} postAuthor={postAuthor} />
               ))}
             </>
           )}

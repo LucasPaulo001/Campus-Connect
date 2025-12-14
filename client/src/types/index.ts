@@ -5,8 +5,10 @@ export interface IUser {
   email: string;
   userId: string;
   role: string;
-  bio: string;
+  biography: string;
   avatarUrl: string;
+  followers: number;
+  following: number;
   xp: number;
 }
 
@@ -27,6 +29,7 @@ export interface IPost {
   createdAt: string;
   liked: boolean;
   saved: boolean;
+  tags: string[]
 }
 
 
@@ -91,4 +94,12 @@ export interface IChallenge {
   type: string;
   data: data;
   group_id: string;
+}
+
+export interface INotification {
+  _id: string;
+  message: string;
+  type: string;
+  readAt: boolean;
+  createdAt: string;
 }

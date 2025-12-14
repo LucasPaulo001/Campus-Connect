@@ -64,17 +64,18 @@ export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuthContext();
 
   useEffect(() => {
-    const socket = connectSocket(user?.id!);
+    const socket = connectSocket(user?.id);
 
     socket.on("notification", (data) => {
       setNotification((prev) => [data, ...prev]);
+      toast(data.message);
       console.log("Nova notificação:", data);
     });
 
     return () => {
-      socket.off("notification");
+      socket.disconnect();
     };
-  }, []);
+  }, [user?.id]);
 
   // Listar postagens do feed
   const listPosts = async (token: string) => {

@@ -9,6 +9,8 @@ import {
   MessageCircle,
   Edit,
   Settings,
+  BellIcon,
+  Search,
 } from "lucide-react";
 import { MdUpload } from "react-icons/md";
 
@@ -16,9 +18,7 @@ import { useEffect, useState } from "react";
 import { AiOutlinePartition } from "react-icons/ai";
 import { useRouter } from "next/navigation";
 import { FaRegBookmark } from "react-icons/fa";
-import { useAuthContext } from "@/contexts/AuthContext";
-import { toast } from "sonner";
-import { useActionContext } from "@/contexts/ActionsContext";
+import { SearchPerson } from "../Search/Search";
 
 export const NavbarClient = () => {
   const router = useRouter();
@@ -46,6 +46,11 @@ export const NavbarClient = () => {
       onClick: () => router.push("/profile-edit"),
     },
     {
+      item: "Notificações",
+      icon: <BellIcon />,
+      onClick: () => router.push("/notifications"),
+    },
+    {
       item: "Configurações",
       icon: <Settings />,
       onClick: () => router.push("/settings"),
@@ -61,11 +66,7 @@ export const NavbarClient = () => {
       onClick: () => router.push("posts-saved"),
     },
   ];
-  const { notification } = useActionContext();
-  notification.forEach((n: any) => {
-    toast(n.message);
-  });
-
+  
   // Items para o desktop
   const itemsDesktop = [
     {
@@ -166,12 +167,29 @@ export const NavbarClient = () => {
             </Link>
           </li>
           <li>
+            <div
+              className="flex w-[100px] px-2 py-2 hover:text-white hover:bg-blue-600 hover:transition hover:rounded-2xl flex-col cursor-pointer items-center justify-center"
+              
+            >
+              <SearchPerson />
+            </div>
+          </li>
+          <li>
             <Link
               className="flex w-[100px] px-2 py-2 hover:text-white hover:bg-blue-600 hover:transition hover:rounded-2xl flex-col items-center justify-center"
               href={"/messages"}
             >
               <MessageCircle />
               {!shrunk && <span className="text-xs mt-1">Mensagens</span>}
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="flex w-[100px] px-2 py-2 hover:text-white hover:bg-blue-600 hover:transition hover:rounded-2xl flex-col items-center justify-center"
+              href={"/notifications"}
+            >
+              <BellIcon />
+              {!shrunk && <span className="text-xs mt-1">Notificações</span>}
             </Link>
           </li>
           <li className="flex px-2 py-2 hover:text-white hover:bg-blue-600 hover:transition hover:rounded-2xl flex-col items-center justify-center">
