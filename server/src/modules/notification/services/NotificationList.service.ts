@@ -11,8 +11,18 @@ export async function ListNotificationsService(userId: string) {
         NotificationRepository.countUnread(userId)
     ]);
 
+    const notificationsList = notifications.map((n: any) => ({
+        id: n._id,
+        message: n.message,
+        user: {
+            id: n.user._id,
+            name: n.user.name,
+            role: n.user.role
+        }
+    }))
+
     return {
-        notifications,
+        notificationsList,
         unreadCount
     }
 }

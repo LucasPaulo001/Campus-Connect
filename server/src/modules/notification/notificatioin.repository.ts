@@ -11,6 +11,8 @@ export const NotificationRepository = {
             .find({ user: userId })
             .sort({ createdAt: -1 })
             .limit(limit)
+            .populate("user")
+            .select("-password")
     },
 
     countUnread(userId: string) {

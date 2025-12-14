@@ -9,7 +9,7 @@ export async function ListNotificationsController(req: CustomRequest, res: Respo
 
         const result = await ListNotificationsService(userId);
 
-        res.status(200).json({ notification: result.notifications, unreadCount: result.unreadCount })
+        res.status(200).json({ notification: result.notificationsList, unreadCount: result.unreadCount })
     }
     catch(err: any){
         res.status(500).json({error: "Erro interno do servidor.", err: err});

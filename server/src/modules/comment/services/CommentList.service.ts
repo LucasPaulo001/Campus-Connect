@@ -7,6 +7,7 @@ type TResponseAuthor = {
   name: string;
   email: string;
   role: string;
+  avatarUrl: string;
 }
 
 // Listar comentários de uma postagem
@@ -32,7 +33,8 @@ export async function ListCommentsByPostService(postId: string, userId: string){
         id: author._id,
         name: author?.name,
         email: author?.email,
-        role: author.role
+        role: author.role,
+        avatarUrl: author.avatarUrl
       } : null,
       content: comment.content,
       likes: comment.likes?.length,

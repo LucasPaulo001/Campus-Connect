@@ -3,6 +3,7 @@ import { CustomRequest } from "../../middlewares/AuthGuard.js";
 import {
   CreateChallengeService,
   DeleteChallengeService,
+  ResponseChallengeQuizService,
 } from "./services/challengeAction.service.js";
 import { ListChallengeByGroupService } from "./services/challengeList.service.js";
 
@@ -69,4 +70,29 @@ export async function ListChallengeByGroupController(
     res.status(500).json({ error: err.message });
   }
 
+}
+
+// Responder desafio
+export async function ResponseChallengeQuizController(
+  req: CustomRequest,
+  res: Response
+){
+  try{
+
+    const userId = req.user._id;
+
+    const challengeId = req.params.id;
+
+    const { questionIndex, responseIndex } = req.body;
+
+    const result = ResponseChallengeQuizService(userId, challengeId, questionIndex, responseIndex);
+
+    res.status(201).json(result);
+
+  }
+  catch(err: any){
+
+    res.status(500).json({ error: err });
+
+  }
 }

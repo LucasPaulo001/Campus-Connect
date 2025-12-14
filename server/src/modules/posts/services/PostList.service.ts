@@ -6,18 +6,22 @@ import postModel from "../post.model.js";
 import { PostRepository } from "../post.repository.js";
 
 // Listar postagens
-export async function ListAllPostService(userId: string) {
-  const posts = await PostRepository.findAll();
+export async function ListAllPostService(userId: string, page: number, limit: number) {
+  const {
+    posts,
+    total,
+    totalPages,
+  } = await PostRepository.findAll(page, limit);
   const user = await UserRepository.findById(userId);
 
   const savedIds = user?.postsSaveds || [];
 
-  const dataFormated = posts.map((post) => {
+  const dataFormated = posts.map((post: any) => {
     const author = post.author as TAuthor;
     const user = author?.user;
 
     const userObjectId = new Types.ObjectId(userId);
-    const liked = post.likes?.some((id) => id.equals(userObjectId));
+    const liked = post.likes?.some((id: any) => id.equals(userObjectId));
 
     const saved = savedIds.some((savedId) => savedId.equals(post._id));
 

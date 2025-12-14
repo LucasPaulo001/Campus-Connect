@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "npx tsx watch src/server.ts",
     "start": "node dist/server.js",
-    "build": "tsc"
+    "build": "tsc",
+    "seed": "node dist/seed/index.js"
   },
   "keywords": [],
   "author": "Lucas <lp152659@gmail.com> (https://lucaspaulo001.github.io/Portfolio/)",

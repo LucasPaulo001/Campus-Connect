@@ -1,4 +1,3 @@
-import { TResponse } from "../../../@types/response/response.type.js";
 import { CommentRepository } from "../../comment/comment.repository.js";
 import { ResponseRepository } from "../response.repository.js";
 
@@ -18,6 +17,7 @@ export async function ListResponsesService(commentId: string) {
       name: (res.author as any)?.name,
       email: (res.author as any)?.email,
       role: (res.author as any)?.role,
+      avatarUrl: (res.author as any)?.avatarUrl
     },
     content: res.content,
     likes: res.likes,

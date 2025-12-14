@@ -189,14 +189,14 @@ export async function LikePostService(postId: string, userId: string) {
     );
 
     //Emitindo notificação no socket
-    io.to(post.author.toString()).emit("notification", {
+    io.to(authorUserId).emit("notification", {
       type: "like_post",
       message: "Alguém curtiu sua postagem.",
       postId,
       fromUser: {
         id: user._id,
         name: user.name,
-        avatar: user.avatarUrl,
+        avatarUrl: user.avatarUrl,
       },
       createdAt: new Date(),
     });

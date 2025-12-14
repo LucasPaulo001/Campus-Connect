@@ -48,11 +48,15 @@ export async function CreateCommentService(
 
       await NotificationCreate(authorProfile.user, "Alguém comentou na sua postagem", NotificationType.COMMENT);
 
-      io.to(post.author.toString()).emit("notification", {
+      io.to(authorUserId).emit("notification", {
         type: "comment",
         message: "Alguém comentou na sua postagem.",
         postId,
-        fromUser: user._id,
+        fromUser: {
+          id: user._id,
+          name: user.name,
+          avatarUrl: user.avatarUrl
+        },
         createdAt: new Date(),
       });
     }

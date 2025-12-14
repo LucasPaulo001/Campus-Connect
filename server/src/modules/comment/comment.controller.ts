@@ -14,7 +14,7 @@ export async function CreateCommentController(req: CustomRequest, res: Response)
 
         const result = await CreateCommentService(author, content, postId);
 
-        res.status(201).json({msg: result.msg, comment: result.comment});
+        res.status(201).json({msg: result.msg, comment: result.newComment});
     }
     catch(err: any){
         res.status(500).json({error: err.message});

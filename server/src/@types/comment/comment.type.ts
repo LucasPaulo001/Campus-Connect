@@ -8,5 +8,6 @@ export type TComment = {
     responses?: Types.ObjectId[];
     likes?: Types.ObjectId[];
     liked?: boolean;
+    avatarUrl?: string;
     createdAt?: Date;
 }

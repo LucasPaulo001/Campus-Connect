@@ -4,14 +4,31 @@ import { TCreatePostData } from "./services/PostAction.service.js";
 import { TPost } from "../../@types/post/post.type.js";
 
 export const PostRepository = {
-  findAll() {
-    return postModel.find().populate({
-      path: "author",
-      populate: {
-        path: "user",
-        select: "name emai role avatarUrl",
-      },
-    });
+  findAll(page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+
+    return Promise.all([
+      postModel
+        .find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate({
+          path: "author",
+          populate: {
+            path: "user",
+            select: "name emai role avatarUrl",
+          },
+        }),
+
+      postModel.countDocuments(),
+    ]).then(([posts, total]) => ({
+      posts,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    }));
   },
 
   findById(id: string) {

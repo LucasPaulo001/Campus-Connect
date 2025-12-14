@@ -6,5 +6,6 @@ export type TResponse = {
     comment: Types.ObjectId;
     content: string;
     likes?: Types.ObjectId[];
+    avatarUrl?: string;
     createdAt?: Date;
 }
