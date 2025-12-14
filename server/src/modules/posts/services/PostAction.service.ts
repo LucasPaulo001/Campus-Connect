@@ -156,11 +156,6 @@ export async function EditPostService(
   };
 }
 
-// Tipagem do author
-export function isAuthor(obj: any): obj is { userId: Types.ObjectId } {
-  return obj && typeof obj === "object" && "userId" in obj;
-}
-
 // Curtir postagens
 export async function LikePostService(postId: string, userId: string) {
   const user = await UserRepository.findById(userId);
@@ -183,27 +178,28 @@ export async function LikePostService(postId: string, userId: string) {
     userRepository: UserRepository,
   });
 
-  if (isAuthor(post.author)) {
-    if (result.liked && post.author.userId.toString() !== user._id.toString()) {
+  const authorProfile = post.author as any;
+  const authorUserId = authorProfile.user.toString();
 
-      // Criando notificação no banco
-      const authorObjectId = new Types.ObjectId(post.author.userId._id);
+  if (result.liked && authorUserId !== user._id.toString()) {
+    await NotificationCreate(
+      authorProfile.user,
+      "Alguém curtiu sua postagem",
+      NotificationType.LIKE
+    );
 
-      NotificationCreate(authorObjectId, "Alguém curtiu sua postagem", NotificationType.LIKE);
-
-      //Emitindo notificação no socket
-      io.to(post.author.toString()).emit("notification", {
-        type: "like_post",
-        message: "Alguém curtiu sua postagem.",
-        postId,
-        fromUser: {
-          id: user._id,
-          name: user.name,
-          avatar: user.avatarUrl,
-        },
-        createdAt: new Date(),
-      });
-    }
+    //Emitindo notificação no socket
+    io.to(post.author.toString()).emit("notification", {
+      type: "like_post",
+      message: "Alguém curtiu sua postagem.",
+      postId,
+      fromUser: {
+        id: user._id,
+        name: user.name,
+        avatar: user.avatarUrl,
+      },
+      createdAt: new Date(),
+    });
   }
 
   return result;

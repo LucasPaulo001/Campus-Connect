@@ -32,6 +32,7 @@ export async function ListAllPostService(userId: string) {
             email: author.user.email,
             role: author.user.role,
             userId: author.user._id,
+            avatarUrl: author.user.avatarUrl
           }
         : null,
       likes: post?.likes?.length,
@@ -169,6 +170,7 @@ export async function ListPostByTeacherService(teacherId: string) {
             name: author.user.name,
             email: author.user.email,
             role: author.user.role,
+            avatarUrl: author.user.avatarUrl
           }
         : null,
       likes: post?.likes?.length,

@@ -20,6 +20,7 @@ export type TAuthor = {
     name: string;
     email: string;
     role: string;
+    avatarUrl: string;
   };
 };
 

@@ -4,7 +4,6 @@ import { CommentRepository } from "../comment.repository.js";
 import { PostRepository } from "../../posts/post.repository.js";
 import { ToggleLike } from "../../../services/Like.service.js";
 import { io } from "../../../sockets/socket.js";
-import { isAuthor } from "../../posts/services/PostAction.service.js";
 import { NotificationCreate } from "../../../services/Notification.service.js";
 import { NotificationType } from "../../../@types/notification/notificatio.type.js";
 
@@ -41,12 +40,13 @@ export async function CreateCommentService(
 
   const newComment = await CommentRepository.create(data);
 
-  if (isAuthor(post.author)) {
-    if (post.author.userId.toString() !== user._id.toString()) {
+  const authorProfile = post.author as any;
+  const authorUserId = authorProfile.user.toString();
 
-      const userToNotify = new Types.ObjectId(post.author.userId._id);
+    if (authorUserId !== user._id.toString()) {
 
-      NotificationCreate(userToNotify, "Alguém comentou na sua postagem", NotificationType.COMMENT);
+
+      await NotificationCreate(authorProfile.user, "Alguém comentou na sua postagem", NotificationType.COMMENT);
 
       io.to(post.author.toString()).emit("notification", {
         type: "comment",
@@ -56,11 +56,10 @@ export async function CreateCommentService(
         createdAt: new Date(),
       });
     }
-  }
 
   return {
     msg: "Comentário adicionado.",
-    comment: newComment,
+    newComment,
   };
 }
 

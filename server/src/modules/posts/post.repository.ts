@@ -9,7 +9,7 @@ export const PostRepository = {
       path: "author",
       populate: {
         path: "user",
-        select: "name emai role",
+        select: "name emai role avatarUrl",
       },
     });
   },
@@ -24,7 +24,7 @@ export const PostRepository = {
       path: "author",
       populate: {
         path: "user",
-        select: "name email role",
+        select: "name email role avatarUrl",
       },
     });
   },
