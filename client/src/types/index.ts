@@ -94,3 +94,11 @@ export interface IChallenge {
   data: data;
   group_id: string;
 }
+
+export interface INotification {
+  _id: string;
+  message: string;
+  type: string;
+  read: boolean;
+  createdAt: string;
+}

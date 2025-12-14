@@ -107,11 +107,11 @@ export const PostCard = ({
     <div className="bg-white dark:bg-gray-800 mx-3 w-[90%] md:w-[80%] border rounded-xl shadow-sm p-2 space-y-4">
       <div className="flex justify-between items-center">
         <span className="font-bold text-[15px] flex items-center md:p-4 gap-6 justify-between md:gap-5 md:text-2xl">
-          {author.userId === user?.id && user.avatarUrl  ? (
+          {author?.avatarUrl && author.avatarUrl.trim().length > 0  ? (
             <div className="flex justify-center my-3.5 items-center h-20">
               <Image
                 className="rounded-full"
-                src={user.avatarUrl}
+                src={author.avatarUrl}
                 width={60}
                 height={60}
                 alt="perfil"

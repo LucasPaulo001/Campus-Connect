@@ -2,135 +2,150 @@
 
 import React, { useContext, createContext, useState, useEffect } from "react";
 import { login, register, profile, forgoutPass } from "@/api/auth";
-import { IUser } from "@/types";
+import { INotification, IUser } from "@/types";
 import { toast } from "sonner";
+import {
+  markNotificationAsReadAPI,
+} from "@/api/notifications";
 
 interface IAuthContextProps {
-    loginFunc: (email: string, password: string) => Promise<void>
-    registerFunc: (data: any) => Promise<any>
-    loading: boolean
-    token: string
-    loadProfile: () => Promise<void>
-    user: IUser | null
-    forgout_pass: (email: string) => Promise<any>
-    logout: () => void
-
+  loginFunc: (email: string, password: string) => Promise<void>;
+  registerFunc: (data: any) => Promise<any>;
+  loading: boolean;
+  token: string;
+  loadProfile: () => Promise<void>;
+  user: IUser | null;
+  forgout_pass: (email: string) => Promise<any>;
+  logout: () => void;
+  notification: INotification[];
+  unreadCount: number; 
+  markNotificationAsRead: (id: string, notificationId: string) => Promise<void>;
 }
 
-export const AuthContext = createContext<IAuthContextProps | undefined>(undefined);
+export const AuthContext = createContext<IAuthContextProps | undefined>(
+  undefined
+);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<IUser | null>(null);
-    const [token, setToken] = useState<string>("");
-    const [loading, setLoading] = useState<boolean>(false);
+  const [user, setUser] = useState<IUser | null>(null);
+  const [token, setToken] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [notification, setNotification] = useState<INotification[]>([]);
 
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            setToken(token);
-        }
-    }, []);
-
-    useEffect(() => {
-        if (token) {
-            loadProfile();
-        }
-    }, [token]);
-
-    // Login
-    const loginFunc = async (email: string, password: string) => {
-        try {
-            setLoading(true);
-            const res = await login(email, password)
-
-            localStorage.setItem("token", res.token);
-            console.log(res.token);
-            setToken(res.token);
-
-        }
-        catch (err: any) {
-            console.log(err);
-            toast.warning(err.response.data.error)
-        }
-        finally {
-            setLoading(false);
-        }
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setToken(token);
     }
+  }, []);
 
-    // Registro
-    const registerFunc = async (data: any) => {
-        try {
-            setLoading(true);
-            const res = await register(data);
-            toast.success(res.message);
-        }
-        catch (err: any) {
-            toast.warning(err.response.data.error)
-        }
-        finally {
-            setLoading(false);
-        }
+  useEffect(() => {
+    if (token) {
+      loadProfile();
     }
+  }, [token]);
 
-    // Perfil
-    const loadProfile = async () => {
+  // Login
+  const loginFunc = async (email: string, password: string) => {
+    try {
+      setLoading(true);
+      const res = await login(email, password);
 
-
-        try {
-            const res = await profile(token);
-            setUser(res);
-            console.log(res);
-        }
-        catch (err) {
-            console.log(err);
-        }
+      localStorage.setItem("token", res.token);
+      console.log(res.token);
+      setToken(res.token);
+    } catch (err: any) {
+      console.log(err);
+      toast.warning(err.response.data.error);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    // Solicitar redefinição de senha
-    const forgout_pass = async (email: string) => {
-        setLoading(true);
-        try {
-            const res = await forgoutPass(email);
-            toast.success(res.message)
-        }
-        catch (err) {
-            console.log(err);
-        }
-        finally {
-            setLoading(false);
-        }
+  // Registro
+  const registerFunc = async (data: any) => {
+    try {
+      setLoading(true);
+      const res = await register(data);
+      toast.success(res.message);
+    } catch (err: any) {
+      toast.warning(err.response.data.error);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    // Logout
-    const logout = () => {
-        localStorage.removeItem("token");
-        setToken("");
-        setUser(null);
+  // Perfil
+  const loadProfile = async () => {
+    try {
+      const res = await profile(token);
+      setUser(res);
+      console.log(res);
+    } catch (err) {
+      console.log(err);
     }
+  };
 
-    const contextValues: IAuthContextProps = {
-        loginFunc,
-        loading,
-        registerFunc,
-        token,
-        loadProfile,
-        user,
-        forgout_pass,
-        logout
+  // Solicitar redefinição de senha
+  const forgout_pass = async (email: string) => {
+    setLoading(true);
+    try {
+      const res = await forgoutPass(email);
+      toast.success(res.message);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    return (
-        <AuthContext.Provider value={contextValues}>
-            {children}
-        </AuthContext.Provider>
-    )
-}
 
-export const useAuthContext = () => {
-    const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error("use o authContext dentro de um AuthProvider");
+  const markNotificationAsRead = async (id: string) => {
+    try {
+      await markNotificationAsReadAPI(token, id);
+
+      setNotification((prev) =>
+        prev.map((n) => (n._id === id ? { ...n, read: true } : n))
+      );
+    } catch (err) {
+      console.log(err);
     }
-    return context;
+  };
+
+  const unreadCount = notification.filter((n) => !n.read).length;
+
+  // Logout
+  const logout = () => {
+    localStorage.removeItem("token");
+    setToken("");
+    setUser(null);
+  };
+
+  const contextValues: IAuthContextProps = {
+    loginFunc,
+    loading,
+    registerFunc,
+    token,
+    loadProfile,
+    user,
+    forgout_pass,
+    logout,
+    markNotificationAsRead,
+    notification,
+    unreadCount
+  };
+
+  return (
+    <AuthContext.Provider value={contextValues}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
+export const useAuthContext = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("use o authContext dentro de um AuthProvider");
+  }
+  return context;
+};
