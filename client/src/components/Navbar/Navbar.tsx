@@ -134,7 +134,7 @@ export const NavbarClient = () => {
         ${shrunk ? "h-12" : "h-20"}
       `}
     >
-      <nav className="h-full flex items-center justify-around px-4">
+      <nav className="h-full flex items-center justify-between md:justify-between px-4">
         <div>
           <Link href={"/"}>
             <h1 className="text-[20px] flex items-center gap-3 justify-center font-bold md:text-2xl">

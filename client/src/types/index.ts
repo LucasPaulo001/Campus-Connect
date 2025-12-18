@@ -97,9 +97,10 @@ export interface IChallenge {
 }
 
 export interface INotification {
-  _id: string;
+  id: string;
   message: string;
   type: string;
-  readAt: boolean;
-  createdAt: string;
+  readAt: Date | null;
+  createdAt: Date;
+  user: IUser
 }

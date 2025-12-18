@@ -14,10 +14,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
-import { Textarea } from "@/components/ui/textarea";
 import { useActionContext } from "@/contexts/ActionsContext";
 import { useAuthContext } from "@/contexts/AuthContext";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 
 import dynamic from "next/dynamic";
@@ -39,6 +38,7 @@ interface IModalPostsProps {
   author?: string;
   typeChallenge?: string;
   data?: any;
+  challengeId?: string | undefined
 }
 
 export function ModalPosts({
@@ -50,6 +50,7 @@ export function ModalPosts({
   author,
   typeChallenge,
   data,
+  challengeId
 }: IModalPostsProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState<string | undefined>("");
@@ -58,6 +59,15 @@ export function ModalPosts({
   const [xp, setXp] = useState(0);
   const [quiz, setQuiz] = useState<any>(null);
   const [timer, setTimer] = useState<number>(0);
+
+  const [answers, setAnswers] = useState<
+    {
+      questionIndex: number;
+      answerIndex: number;
+      isCorrect: boolean;
+    }[]
+  >([]);
+
 
   const [loading, setLoading] = useState(false);
 
@@ -158,11 +168,21 @@ export function ModalPosts({
 
                 <span>Autor: {author}</span>
                 <hr className="my-5" />
+                {/* Conteúdo de Quiz */}
                 {typeChallenge === "quiz" && (
                   <Quiz
+                    challengeId={challengeId}
                     description={descriptionChallenge || ""}
                     onAnswer={(qIdx, aIdx, isCorrect) => {
-                      
+                      setAnswers((prev) => {
+                        if (prev.some((a) => a.questionIndex === qIdx))
+                          return prev;
+
+                        return [
+                          ...prev,
+                          { questionIndex: qIdx, answerIndex: aIdx, isCorrect },
+                        ];
+                      });
                     }}
                     questions={data.quiz.questions}
                     xp={dataXP || 0}
@@ -177,6 +197,7 @@ export function ModalPosts({
               )}
             </div>
 
+            {/* Botão para responder */}
             <DialogFooter>
               <Button variant="outline" className="w-full mt-5">
                 Enviar resposta

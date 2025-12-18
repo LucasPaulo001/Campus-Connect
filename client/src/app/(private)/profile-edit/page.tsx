@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { IUser } from "@/types";
 import Image from "next/image";
 import React, { useState } from "react";
 
@@ -27,7 +28,14 @@ export default function ProfileEdit() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const data = await EditData(newName, newNameUser, biography, token, avatar);
+    const updates: any = {
+      newName,
+      newNameUser,
+      biography,
+      avatar
+    }
+
+    const data = await EditData(updates, token);
     await loadProfile();
     console.log(data);
   };

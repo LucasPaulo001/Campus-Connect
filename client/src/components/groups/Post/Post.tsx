@@ -77,6 +77,7 @@ export function Post({ group_id }: IPostsProps) {
             {/* Rodapé */}
             <div className="flex items-center justify-end">
               <ModalPosts
+                challengeId={c.id}
                 typeChallenge={c.type}
                 data={c.data}
                 author={c.author.name}

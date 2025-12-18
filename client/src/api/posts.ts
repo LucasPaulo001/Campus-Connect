@@ -42,8 +42,8 @@ export const editPost = async (post_id: string | undefined, title: string, conte
 }
 
 // Listar postagens no feed
-export const loadPosts = async (token: string) => {
-  const res = await axiosInstace.get("/api/post", {
+export const loadPosts = async (token: string, page: number) => {
+  const res = await axiosInstace.get(`/api/post?page=${page}&limit=5`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
