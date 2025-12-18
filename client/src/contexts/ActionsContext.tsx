@@ -13,7 +13,6 @@ import {
   loadPosts,
   likePosts,
   loadComments,
-  removeLikePost,
   LoadMyPosts,
   GetSavedPosts,
 } from "@/api/posts";

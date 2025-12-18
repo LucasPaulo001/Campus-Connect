@@ -1,14 +1,12 @@
 "use client"
 import { Badge } from "@/components/ui/badge"
-import { Spinner } from "@/components/ui/spinner"
+import { SpinnerLoading } from "./SpinnerLoading"
 
 export function LoadingPage() {
   return (
     <div className="h-screen flex flex-col justify-center items-center">
-      <Badge variant="outline">
-        <Spinner className="size-8" />
+        <SpinnerLoading />
         Aguarde...
-      </Badge>
     </div>
   )
 }

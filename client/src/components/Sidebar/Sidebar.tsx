@@ -17,6 +17,9 @@ import { Dialogs } from "../Dialog/Dialog";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
+import { useEffect } from "react";
+import { fetchUser } from "@/redux/slices/profileSlice";
 
 const title = {
   value: "Adicionar Postagem",
@@ -34,7 +37,16 @@ const myGroups = {
 };
 
 export function Sidebar() {
-  const { user } = useAuthContext();
+  const { user } = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+      const fetchProfile = async () => {
+        dispatch(fetchUser());
+      }
+  
+      fetchProfile();
+    }, [dispatch])
 
   return (
     <Command className="rounded-lg border shadow-md md:w-[350px]">

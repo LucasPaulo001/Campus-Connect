@@ -13,7 +13,6 @@ interface IAuthContextProps {
   registerFunc: (data: any) => Promise<any>;
   loading: boolean;
   token: string;
-  loadProfile: () => Promise<void>;
   user: IUser | null;
   forgout_pass: (email: string) => Promise<any>;
   logout: () => void;
@@ -39,11 +38,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (token) {
-      loadProfile();
-    }
-  }, [token]);
 
   // Login
   const loginFunc = async (email: string, password: string) => {
@@ -75,16 +69,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // Perfil
-  const loadProfile = async () => {
-    try {
-      const res = await profile(token);
-      setUser(res);
-      console.log(res);
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   // Solicitar redefinição de senha
   const forgout_pass = async (email: string) => {
@@ -105,7 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await markNotificationAsReadAPI(token, notificationId);
 
       setNotification((prev) =>
-        prev.map((n) => (n._id === notificationId ? { ...n, read: true } : n))
+        prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n))
       );
       toast.success("Notificação marcada como lida.")
     } catch (err) {
@@ -127,7 +111,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     loading,
     registerFunc,
     token,
-    loadProfile,
     user,
     forgout_pass,
     logout,

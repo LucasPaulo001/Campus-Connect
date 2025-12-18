@@ -6,12 +6,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
+import { fetchUser } from "@/redux/slices/profileSlice";
 import { IUser } from "@/types";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function ProfileEdit() {
-  const { user } = useAuthContext();
+  const { user } = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      dispatch(fetchUser());
+    }
+
+    fetchProfile();
+  }, [dispatch])
 
   const [newName, setNewName] = useState<string | undefined>(user?.name);
   const [newNameUser, setNewNameUser] = useState<string | undefined>(
@@ -22,7 +33,7 @@ export default function ProfileEdit() {
   const [newPass, setNewPass] = useState<string | "">("");
   const [repeatPass, setRepeatPass] = useState<string | "">("");
 
-  const { token, loadProfile } = useAuthContext();
+  const { token } = useAuthContext();
 
   // Enviando dados para o backend
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -36,7 +47,6 @@ export default function ProfileEdit() {
     }
 
     const data = await EditData(updates, token);
-    await loadProfile();
     console.log(data);
   };
 
@@ -84,12 +94,13 @@ export default function ProfileEdit() {
               />
             </div>
             <hr className="my-2" />
-            {/* <div className="py-2">
+            <div className="py-2">
               <label htmlFor="nova_senha">Senha:</label>
               <Input
                   placeholder="Nova senha"
                   id="nova_senha"
                   value={newPass}
+                  type="password"
                   onChange={(e) => setNewPass(e.target.value)}
               />
             </div>
@@ -98,10 +109,11 @@ export default function ProfileEdit() {
               <Input
                   placeholder="Repita a senha"
                   id="repeat_senha"
+                  type="password"
                   value={repeatPass}
                   onChange={(e) => setNewPass(e.target.value)}
               />
-            </div> */}
+            </div>
           </div>
           <div className="flex items-end justify-end">
             <Button
