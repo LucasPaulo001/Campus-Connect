@@ -16,5 +16,6 @@ export enum NotificationType {
   XP = "xp",
   FEEDBACK = "feedback",
   SYSTEM = "system",
-  FOLLOW = "follow"
+  FOLLOW = "follow",
+  NEW_MESSAGE = "new_message"
 }

@@ -14,3 +14,10 @@ export type TUser = {
   avatarUrl?: string; 
   role?: "admin" | "professor" | "estudante" | "user";
 };
+
+export type TUpdateUser = {
+    name?: string;
+    email?: string;
+    nameUser?: string;
+    password?: string;
+}

@@ -1,7 +1,7 @@
 import { UserRepository } from "./user.repository.js";
 import { jwtGenerate } from "../../settings/jwt/jwt.js";
 import bcrypt from "bcrypt";
-import { TUser } from "../../@types/user/user.type.js";
+import { TUpdateUser, TUser } from "../../@types/user/user.type.js";
 import { FollowRepository } from "../follow/follow.repository.js";
 
 // Registro
@@ -95,40 +95,44 @@ type DataUpdates = {
 };
 
 // Editar dados
-export async function ProfileEditService(id: string, updates: DataUpdates) {
+export async function ProfileEditService(id: string, data: DataUpdates) {
   const user = await UserRepository.findById(id);
 
-  if (!user) {
-    throw new Error("Usuário não encontrado.");
-  }
+    if(!user) throw new Error("Usuário não encontrado.");
 
-  const cleanUpdates: Partial<DataUpdates> = {};
+    const updates: Partial<TUpdateUser> = {};
 
-  if (updates.nameUser && updates.nameUser !== user.nameUser) {
-    const existsNameUser = await UserRepository.findByUserName(
-      updates.nameUser
-    );
-    if (existsNameUser) throw new Error("Nome de usuário já está em uso.");
-    cleanUpdates.nameUser = updates.nameUser
-  }
+    if(data.name && data.name !== user.name){
+        updates.name = data.name;
+    }
 
+    if(data.nameUser && data.nameUser !== user.nameUser){
+        const existUserName = await UserRepository.findByUserName(data.nameUser);
 
-  if (updates.name && updates.name !== user.name) {
-    cleanUpdates.name = updates.name
-  }
+        if(existUserName){
+            throw new Error("O nome de usuário já existe.");
+        }
+        else {
+            updates.nameUser = data.nameUser;
+        }
+    }
 
-  if (updates.password) {
-    const salt = await bcrypt.genSalt();
-    cleanUpdates.password = await bcrypt.hash(updates.password, salt);
-  }
+    if(data.password && data.password !== user.password){
+        const salt = await bcrypt.genSalt();
+        const hashPass = await bcrypt.hash(data.password, salt);
 
-  if (Object.keys(cleanUpdates).length === 0) {
-    throw new Error("Nenhuma alteração foi feita.");
-  }
+        updates.password = hashPass;
+    }
 
-  const updatedUser = await UserRepository.update(id, updates);
+    if(Object.keys(updates).length === 0){
+        return { message: "Nada para atualizar" };
+    }
 
-  return updatedUser;
+    console.log(updates);
+
+    const updatedUser = await UserRepository.update(id, updates);
+
+    return { updatedUser }
 }
 
 // Buscar usuários
