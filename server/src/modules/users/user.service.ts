@@ -102,25 +102,19 @@ export async function ProfileService(user: TUser) {
   return dataFormated;
 }
 
-type DataUpdates = {
-  name: string;
-  nameUser: string;
-  password: string;
-};
-
 // Editar dados
-export async function ProfileEditService(id: string, data: DataUpdates) {
+export async function ProfileEditService(id: string, data: TUpdateUser) {
   const user = await UserRepository.findById(id);
 
     if(!user) throw new Error("Usuário não encontrado.");
 
     const updates: Partial<TUpdateUser> = {};
 
-    if(data.name && data.name !== user.name){
+    if(data.name !== undefined && data.name !== user.name){
         updates.name = data.name;
     }
 
-    if(data.nameUser && data.nameUser !== user.nameUser){
+    if(data.nameUser !== undefined && data.nameUser !== user.nameUser){
         const existUserName = await UserRepository.findByUserName(data.nameUser);
 
         if(existUserName){
@@ -131,18 +125,24 @@ export async function ProfileEditService(id: string, data: DataUpdates) {
         }
     }
 
-    if(data.password && data.password !== user.password){
+    if(data.password !== undefined && data.password !== user.password){
         const salt = await bcrypt.genSalt();
         const hashPass = await bcrypt.hash(data.password, salt);
 
         updates.password = hashPass;
     }
 
+    if(data.biography !== undefined && data.biography !== user.biography){
+      updates.biography = data.biography;
+    }
+
+    if(data.avatarUrl !== undefined && data.avatarUrl !== user.avatarUrl){
+      updates.avatarUrl = data.avatarUrl;
+    }
+
     if(Object.keys(updates).length === 0){
         return { message: "Nada para atualizar" };
     }
-
-    console.log(updates);
 
     const updatedUser = await UserRepository.update(id, updates);
 

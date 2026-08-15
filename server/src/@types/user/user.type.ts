@@ -17,7 +17,8 @@ export type TUser = {
 
 export type TUpdateUser = {
     name?: string;
-    email?: string;
     nameUser?: string;
     password?: string;
+    biography?: string;
+    avatarUrl?: string;
 }
