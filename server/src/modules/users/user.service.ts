@@ -3,6 +3,8 @@ import { jwtGenerate } from "../../settings/jwt/jwt.js";
 import bcrypt from "bcrypt";
 import { TUpdateUser, TUser } from "../../@types/user/user.type.js";
 import { FollowRepository } from "../follow/follow.repository.js";
+import JWTRefreshGenerate from "../../settings/jwt/jwt.refresh.js";
+import { SessionRepository } from "../session/session.repository.js";
 
 // Registro
 export async function RegisterService({
@@ -56,9 +58,19 @@ export async function LoginService(email: string, password: string) {
 
   const token = await jwtGenerate(user._id.toString());
 
+  const refreshToken = await JWTRefreshGenerate(user._id.toString());
+
+  await SessionRepository.create(
+    user._id,
+    refreshToken,
+    new Date(
+      Date.now() + 7 * 24 * 60 * 60 * 1000
+    )
+  );
+
   return {
-    id: user._id,
-    token: token,
+    token,
+    refreshToken
   };
 }
 

@@ -10,7 +10,7 @@ export const jwtGenerate = async (id: string) => {
   }
 
   try {
-    return jwt.sign({ id }, JWT_SECRET, { expiresIn: "7d" });
+    return jwt.sign({ id }, JWT_SECRET, { expiresIn: "15m" });
   } catch (error: any) {
     console.error("Erro ao gerar token.");
   }

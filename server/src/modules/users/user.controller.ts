@@ -29,7 +29,24 @@ export async function LoginController(req: CustomRequest, res: Response) {
 
     const result = await LoginService(email, password);
 
-    res.status(200).json({id: result.id, token: result.token});
+    res.cookie("accessToken", result.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      maxAge: 15 * 60 * 1000
+    });
+
+    res.cookie("refreshToken", result.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
+    res.status(201).json({
+      msg: "Login realizado com sucesso."
+    });
+
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
