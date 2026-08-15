@@ -1,7 +1,6 @@
 import axiosInstace from "./axiosInstance";
 
 export const ResponseQuiz = async (
-  token: string,
   challengeId: string | undefined,
   questionIndex: number,
   responseIndex: number
@@ -12,11 +11,6 @@ export const ResponseQuiz = async (
         questionIndex,
         responseIndex
     },
-    {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    }
   );
 
   return res.data;

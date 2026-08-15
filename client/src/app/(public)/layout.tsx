@@ -11,16 +11,21 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { token, loading } = useAuthContext();
+  const { user, authLoading } = useAuthContext();
 
   useEffect(() => {
-    if (!loading && token) {
+    if (!authLoading && user) {
       router.replace("/");
     }
-  }, [token, loading]);
+  }, [authLoading, user, router]);
 
-  if (loading) return <LoadingPage />;
-  if (token) return null;
+  if (authLoading) {
+    return <LoadingPage />;
+  }
+
+  if (user) {
+    return null;
+  }
 
   return <>{children}</>;
 }

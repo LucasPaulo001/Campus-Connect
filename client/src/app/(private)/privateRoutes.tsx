@@ -1,21 +1,34 @@
 "use client";
 
-import { useAuthContext } from "@/contexts/AuthContext";
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/contexts/AuthContext";
 
-export default function PrivateGuard({ children }: { children: React.ReactNode }) {
-  const { token, loading } = useAuthContext();
+export default function PrivateGuard({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { user, loading } = useAuthContext();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !token) {
+    if (!loading && !user) {
       router.replace("/account");
     }
-  }, [loading, token]);
+  }, [loading, user, router]);
 
-  if (loading) return <div>Carregando...</div>;
-  if (!token) return null;
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p>Carregando...</p>
+      </div>
+    );
+  }
 
-  return children;
+  if (!user) {
+    return null;
+  }
+
+  return <>{children}</>;
 }

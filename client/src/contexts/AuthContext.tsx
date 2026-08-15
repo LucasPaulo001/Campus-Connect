@@ -1,139 +1,193 @@
 "use client";
 
-import React, { useContext, createContext, useState, useEffect } from "react";
-import { login, register, profile, forgoutPass } from "@/api/auth";
+import React, {
+  useContext,
+  createContext,
+  useState,
+  useEffect,
+} from "react";
+
+import {
+  login,
+  register,
+  profile,
+  forgoutPass,
+} from "@/api/auth";
+
 import { INotification, IUser } from "@/types";
 import { toast } from "sonner";
-import {
-  markNotificationAsReadAPI,
-} from "@/api/notifications";
+import { markNotificationAsReadAPI } from "@/api/notifications";
 
 interface IAuthContextProps {
   loginFunc: (email: string, password: string) => Promise<void>;
   registerFunc: (data: any) => Promise<any>;
+
   loading: boolean;
-  token: string;
+  authLoading: boolean;
+
   loadProfile: () => Promise<void>;
+
   user: IUser | null;
+
   forgout_pass: (email: string) => Promise<any>;
-  logout: () => void;
+
   notification: INotification[];
-  unreadCount: number; 
-  markNotificationAsRead: (token: string, notificationId: string) => Promise<void>;
+  unreadCount: number;
+
+  markNotificationAsRead: (
+    notificationId: string
+  ) => Promise<void>;
 }
 
 export const AuthContext = createContext<IAuthContextProps | undefined>(
   undefined
 );
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+export const AuthProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [user, setUser] = useState<IUser | null>(null);
-  const [token, setToken] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+
+  const [authLoading, setAuthLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+
   const [notification, setNotification] = useState<INotification[]>([]);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setToken(token);
+  const loadProfile = async () => {
+    try {
+      const res = await profile();
+
+      setUser(res);
+    } catch (err) {
+      console.log("Usuário não autenticado.");
+      setUser(null);
     }
+  };
+
+  /*
+   * Verifica a sessão quando a aplicação inicia.
+   */
+  useEffect(() => {
+    const initializeAuth = async () => {
+      try {
+        await loadProfile();
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+
+    initializeAuth();
   }, []);
 
-  useEffect(() => {
-    if (token) {
-      loadProfile();
-    }
-  }, [token]);
-
-  // Login
-  const loginFunc = async (email: string, password: string) => {
+  /*
+   * Login
+   */
+  const loginFunc = async (
+    email: string,
+    password: string
+  ) => {
     try {
       setLoading(true);
-      const res = await login(email, password);
 
-      localStorage.setItem("token", res.token);
-      console.log(res.token);
-      setToken(res.token);
+      await login(email, password);
+
+      await loadProfile();
+
+      toast.success("Login realizado com sucesso.");
     } catch (err: any) {
       console.log(err);
-      toast.warning(err.response.data.error);
+
+      toast.warning(
+        err?.response?.data?.error ||
+          "Não foi possível realizar o login."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  // Registro
+  /*
+   * Registro
+   */
   const registerFunc = async (data: any) => {
     try {
       setLoading(true);
+
       const res = await register(data);
+
       toast.success(res.message);
     } catch (err: any) {
-      toast.warning(err.response.data.error);
+      toast.warning(
+        err?.response?.data?.error ||
+          "Não foi possível realizar o cadastro."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  // Perfil
-  const loadProfile = async () => {
-    try {
-      const res = await profile(token);
-      setUser(res);
-      console.log(res);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  // Solicitar redefinição de senha
+  /*
+   * Recuperação de senha
+   */
   const forgout_pass = async (email: string) => {
-    setLoading(true);
     try {
+      setLoading(true);
+
       const res = await forgoutPass(email);
+
       toast.success(res.message);
-    } catch (err) {
+    } catch (err: any) {
       console.log(err);
+
+      toast.warning(
+        err?.response?.data?.error ||
+          "Não foi possível solicitar a redefinição."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-
-  const markNotificationAsRead = async (token: string, notificationId: string) => {
+  /*
+   * Marcar notificação como lida
+   */
+  const markNotificationAsRead = async (
+    notificationId: string
+  ) => {
     try {
-      await markNotificationAsReadAPI(token, notificationId);
+      await markNotificationAsReadAPI(notificationId);
 
       setNotification((prev) =>
-        prev.map((n) => (n._id === notificationId ? { ...n, read: true } : n))
+        prev.map((n) =>
+          n.id === notificationId
+            ? { ...n, read: true }
+            : n
+        )
       );
-      toast.success("Notificação marcada como lida.")
+
+      toast.success("Notificação marcada como lida.");
     } catch (err) {
       console.log(err);
     }
   };
 
-  const unreadCount = notification.filter((n) => !n.readAt).length;
-
-  // Logout
-  const logout = () => {
-    localStorage.removeItem("token");
-    setToken("");
-    setUser(null);
-  };
+  const unreadCount = notification.filter(
+    (n) => !n.readAt
+  ).length;
 
   const contextValues: IAuthContextProps = {
     loginFunc,
     loading,
+    authLoading,
     registerFunc,
-    token,
     loadProfile,
     user,
     forgout_pass,
-    logout,
     markNotificationAsRead,
     notification,
-    unreadCount
+    unreadCount,
   };
 
   return (
@@ -145,8 +199,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
+
   if (context === undefined) {
-    throw new Error("use o authContext dentro de um AuthProvider");
+    throw new Error(
+      "use o AuthContext dentro de um AuthProvider"
+    );
   }
+
   return context;
 };

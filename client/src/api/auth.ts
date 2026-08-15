@@ -13,12 +13,8 @@ export const register = async (data: any) => {
 }
 
 // Perfil
-export const profile = async (token: string) => {
-    const res = await axiosInstace.get("/api/auth/profile", {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
+export const profile = async () => {
+    const res = await axiosInstace.get("/api/auth/profile");
     return res.data;
 }
 
