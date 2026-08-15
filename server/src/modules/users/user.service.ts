@@ -5,6 +5,8 @@ import { TUpdateUser, TUser } from "../../@types/user/user.type.js";
 import { FollowRepository } from "../follow/follow.repository.js";
 import JWTRefreshGenerate from "../../settings/jwt/jwt.refresh.js";
 import { SessionRepository } from "../session/session.repository.js";
+import jwt from "jsonwebtoken";
+import HashToken from "../session/session.tool.js";
 
 // Registro
 export async function RegisterService({
@@ -145,6 +147,72 @@ export async function ProfileEditService(id: string, data: DataUpdates) {
     const updatedUser = await UserRepository.update(id, updates);
 
     return { updatedUser }
+}
+
+//Refresh token
+export async function RefreshTokenServices(refreshToken: string){
+
+  const secret = process.env.JWT_SECRET_REFRESH;
+
+  if(!secret){
+    throw new Error(
+      "JWT_SECRET_REFRESH não configurado."
+    );
+  }
+
+  let decoded: { id: string }
+
+  try{
+    decoded = jwt.verify(
+      refreshToken,
+      secret
+    ) as {
+      id: string
+    }
+  }
+  catch{
+    throw new Error(
+      "Refresh token inválido ou expirado."
+    );
+  }
+
+  //Gera o hash
+  const refreshTokenHash = HashToken(refreshToken);
+
+  //Procura sessão
+  const session = await SessionRepository.findByRefreshTokenHash(refreshTokenHash);
+
+  if(!session){
+    throw new Error("Sessão inválida.");
+  }
+
+  //Verifica expiração da sessão
+  if(session.expiresAt < new Date()){
+    await SessionRepository.deleteByRefreshTokenHash(
+      refreshToken
+    );
+
+    throw new Error(
+      "Sessão expirada."
+    )
+  }
+
+  //Gera novo access token
+  const accessToken = JWTRefreshGenerate(decoded.id);
+
+  return {
+    accessToken
+  }
+
+}
+
+//Logout
+export async function LogoutService(refreshToken: string){
+  const refreshTokenHash = HashToken(refreshToken);
+
+  await SessionRepository.deleteByRefreshTokenHash(
+    refreshTokenHash
+  );
 }
 
 // Buscar usuários

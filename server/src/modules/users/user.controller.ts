@@ -1,8 +1,10 @@
 import { Response } from "express";
 import {
   LoginService,
+  LogoutService,
   ProfileEditService,
   ProfileService,
+  RefreshTokenServices,
   RegisterService,
   SearchUsersService,
 } from "./user.service.js";
@@ -76,8 +78,8 @@ export async function ProfileEditController(req: CustomRequest, res: Response) {
 }
 
 // Buscar usuários
-export async function SearchUserController(req: CustomRequest, res: Response){
-  try{
+export async function SearchUserController(req: CustomRequest, res: Response) {
+  try {
 
     const { q } = req.query
 
@@ -88,7 +90,7 @@ export async function SearchUserController(req: CustomRequest, res: Response){
     res.status(200).json(result);
 
   }
-  catch(err: any){
+  catch (err: any) {
 
     res.status(500).json({ err: err.message });
 
@@ -97,7 +99,7 @@ export async function SearchUserController(req: CustomRequest, res: Response){
 
 // Perfil de usuários
 export async function ProfileUsersController(req: CustomRequest, res: Response) {
-  try{
+  try {
 
     const userId = req.params.id;
 
@@ -106,7 +108,73 @@ export async function ProfileUsersController(req: CustomRequest, res: Response) 
     res.status(200).json(result);
 
   }
-  catch(err: any){
+  catch (err: any) {
     res.status(500).json({ err: err });
   }
 }
+
+
+//Refresh token
+export async function RefreshTokenController(req: Request, res: Response) {
+  try {
+    const refreshToken = process.env.JWT_SECRET_REFRESH;
+
+    if (!refreshToken) {
+      return res.status(401).json({
+        error: "Refresh token não encontrado."
+      });
+    }
+
+    const result = await RefreshTokenServices(refreshToken);
+
+    res.cookie("accessToken", result.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      maxAge: 15 * 60 * 1000
+    });
+
+    return res.status(200).json({
+      msg: "Access token renovado."
+    });
+
+  }
+  catch (error: any) {
+    return res.status(401).json({
+      error: error.message
+    })
+  }
+}
+
+//Logout
+export async function LogoutController(req: CustomRequest, res: Response) {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (refreshToken) {
+      await LogoutService(refreshToken);
+    }
+
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none"
+    });
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none"
+    });
+
+    return res.status(200).json({
+      msg: "Logout realizado com sucesso."
+    });
+  }
+  catch (error: any) {
+    return res.status(500).json({
+      error: "Erro ao realizar logout."
+    });
+  }
+}
+
