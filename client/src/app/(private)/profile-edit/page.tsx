@@ -1,6 +1,6 @@
 "use client";
 
-import { EditData } from "@/api/user";
+import { DTOEditProfile, EditData } from "@/api/user";
 import { AccountCategory } from "@/components/AccountCategory/AccountCategory";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,29 +13,29 @@ import React, { useState } from "react";
 export default function ProfileEdit() {
   const { user } = useAuthContext();
 
-  const [newName, setNewName] = useState<string | undefined>(user?.name);
-  const [newNameUser, setNewNameUser] = useState<string | undefined>(
+  const [name, setName] = useState<string | undefined>(user?.name);
+  const [nameUser, setNameUser] = useState<string | undefined>(
     user?.name_user
   );
-  const [biography, setBiography] = useState<string | "">("");
-  const [avatar, setAvatar] = useState<string | "">("");
+  const [biography, setBiography] = useState<string | undefined>(user?.biography);
+  const [avatar, setAvatar] = useState<string | undefined>(user?.avatarUrl);
   const [newPass, setNewPass] = useState<string | "">("");
   const [repeatPass, setRepeatPass] = useState<string | "">("");
 
-  const { token, loadProfile } = useAuthContext();
+  const { loadProfile } = useAuthContext();
 
   // Enviando dados para o backend
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const updates: any = {
-      newName,
-      newNameUser,
+    const updates: DTOEditProfile = {
+      name,
+      nameUser,
       biography,
-      avatar
+      avatarUrl: avatar
     }
 
-    const data = await EditData(updates, token);
+    const data = await EditData(updates);
     await loadProfile();
     console.log(data);
   };
@@ -52,8 +52,8 @@ export default function ProfileEdit() {
               <Input
                 placeholder="Nome"
                 id="nome"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div className="py-2">
@@ -61,8 +61,8 @@ export default function ProfileEdit() {
               <Input
                 placeholder="Nome de usuário"
                 id="nomeU"
-                value={newNameUser}
-                onChange={(e) => setNewNameUser(e.target.value)}
+                value={nameUser}
+                onChange={(e) => setNameUser(e.target.value)}
               />
             </div>
             <div className="py-2">

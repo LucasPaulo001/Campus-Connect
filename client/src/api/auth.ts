@@ -1,4 +1,4 @@
-import axiosInstace from "./axiosInstance";
+import axiosInstace from "./axios/axiosInstance";
 
 // Login
 export const login = async (email: string, password: string) => {
@@ -21,6 +21,12 @@ export const profile = async () => {
 // Forgout password
 export const forgoutPass = async(email: string) => {
     const res = await axiosInstace.post("/forgout/pass", { email });
+    return res.data;
+}
+
+// Logout
+export const logout = async () => {
+    const res = await axiosInstace.post("/api/logout");
     return res.data;
 }
 

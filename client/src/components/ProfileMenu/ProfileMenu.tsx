@@ -17,6 +17,7 @@ import { BiExit } from "react-icons/bi";
 import { Spinner } from "../ui/spinner";
 import Image from "next/image";
 import { SearchPerson } from "../Search/Search";
+import { useRouter } from "next/navigation";
 
 type listItems = {
   item: string;
@@ -31,8 +32,9 @@ interface IProfileMenuProps {
 }
 
 export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
-  const { logout, user, loading } = useAuthContext();
+  const { logoutFunc, user, loading } = useAuthContext();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const router = useRouter();
 
   const [openSearch, setOpenSearch] = useState<boolean>(false);
 
@@ -43,6 +45,12 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
     if (item.onClick) item.onClick();
     setIsOpen(false);
   };
+
+  const handleLogout = async () => {
+    await logoutFunc();
+
+    router.replace("/account");
+  }
 
   return (
     <>
@@ -88,9 +96,9 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
                 <div className="flex justify-between">
                   <span className="font-semibold">{user?.name_user}</span>
                 </div>
-                <span className="text-sm text-muted-foreground">
+                {/*<span className="text-sm text-muted-foreground">
                   {user?.email}
-                </span>
+                </span>*/}
                 <span className="text-sm text-muted-foreground">
                   {user?.role}
                 </span>
@@ -131,7 +139,7 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
         <SheetFooter>
           <SheetClose asChild>
             <Button
-              onClick={logout}
+              onClick={handleLogout}
               className="cursor-pointer"
               variant="destructive"
             >

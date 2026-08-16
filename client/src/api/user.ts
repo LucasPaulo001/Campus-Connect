@@ -1,15 +1,22 @@
 import { IUser } from "@/types";
-import axiosInstace from "./axiosInstance";
+import axiosInstace from "./axios/axiosInstance";
+
+export interface DTOEditProfile {
+  name?: string;
+  nameUser?: string;
+  biography?: string;
+  avatarUrl?: string;
+}
 
 // Editar dados do perfil
 export const EditData = async (
-  updates: IUser,
+  updates: DTOEditProfile,
 ) => {
   const res = await axiosInstace.patch(
     "/api/auth/profile-edit",
-    {
-      updates
-    }
+
+    updates
+
   );
 
   return res.data;
@@ -17,7 +24,7 @@ export const EditData = async (
 
 // Solicitar categoria de professor
 export const BecomeTeacher = async (formation: string, departament: string) => {
-  const res = await axiosInstace.post("/api/teacher", 
+  const res = await axiosInstace.post("/api/teacher",
     {
       formation,
       departament
@@ -29,7 +36,7 @@ export const BecomeTeacher = async (formation: string, departament: string) => {
 
 // Solicitar categoria de aluno
 export const BecomeStudent = async (course: string, matricula: string) => {
-  const res = await axiosInstace.post("/api/become/student", 
+  const res = await axiosInstace.post("/api/become/student",
     {
       course,
       matricula
@@ -52,5 +59,5 @@ export const FollowUser = async (userToFollowId: string | undefined) => {
     {}
   )
 
-    return res.data;
+  return res.data;
 }

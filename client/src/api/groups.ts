@@ -1,5 +1,5 @@
 import { ParamValue } from "next/dist/server/request/params";
-import axiosInstace from "./axiosInstance";
+import axiosInstace from "./axios/axiosInstance";
 
 // Listagem de grupos criados pelo professor
 export const LoadGroups = async () => {

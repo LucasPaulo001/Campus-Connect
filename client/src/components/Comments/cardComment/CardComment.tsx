@@ -52,7 +52,7 @@ export const CardComment = ({
   const [like, setLike] = useState<boolean>(liked);
   const [likeCounts, setLikeCounts] = useState<number>(likes);
 
-  const { user, token } = useAuthContext();
+  const { user } = useAuthContext();
 
   // Dar like nos comentários
   const handleLike = async (comment_id: string) => {
@@ -61,13 +61,13 @@ export const CardComment = ({
 
       setLikeCounts((prev) => prev - 1);
 
-      const data = await likeComment(user?.id, comment_id, token);
+      const data = await likeComment(user?.id, comment_id);
 
       console.log(data);
     } else {
       setLike(true);
 
-      const data = await likeComment(user?.id, comment_id, token);
+      const data = await likeComment(user?.id, comment_id);
 
       setLikeCounts((prev) => prev + 1);
 
@@ -106,11 +106,11 @@ export const CardComment = ({
               </div>
             )}
             <div className="text-sm flex flex-col font-semibold">
-              <span>{author.name}</span>
+              <span>{author?.name}</span>
               <span className="font-light">{convertDate(createdAt)}</span>
             </div>
           </div>
-          {author.id === user?.id && (
+          {author?.id === user?.id && (
             <PostTools
               id={id}
               type="editComment"

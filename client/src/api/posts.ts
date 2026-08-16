@@ -1,4 +1,4 @@
-import axiosInstace from "./axiosInstance";
+import axiosInstace from "./axios/axiosInstance";
 
 // Criar postagem
 export const addPost = async (title: string, content: string | undefined, tags?: string[]) => {

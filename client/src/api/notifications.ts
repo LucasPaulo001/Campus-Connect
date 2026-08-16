@@ -1,4 +1,4 @@
-import axiosInstace from "./axiosInstance";
+import axiosInstace from "./axios/axiosInstance";
 
 export const loadNotifications = async () => {
     const res = await axiosInstace.get("/api/notifications");

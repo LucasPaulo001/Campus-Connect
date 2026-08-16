@@ -1,4 +1,4 @@
-import axiosInstace from "./axiosInstance";
+import axiosInstace from "./axios/axiosInstance";
 
 export const ResponseQuiz = async (
   challengeId: string | undefined,

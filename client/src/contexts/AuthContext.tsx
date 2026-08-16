@@ -12,6 +12,7 @@ import {
   register,
   profile,
   forgoutPass,
+  logout
 } from "@/api/auth";
 
 import { INotification, IUser } from "@/types";
@@ -33,6 +34,8 @@ interface IAuthContextProps {
 
   notification: INotification[];
   unreadCount: number;
+
+  logoutFunc: () => Promise<void>;
 
   markNotificationAsRead: (
     notificationId: string
@@ -66,9 +69,7 @@ export const AuthProvider = ({
     }
   };
 
-  /*
-   * Verifica a sessão quando a aplicação inicia.
-   */
+
   useEffect(() => {
     const initializeAuth = async () => {
       try {
@@ -81,9 +82,7 @@ export const AuthProvider = ({
     initializeAuth();
   }, []);
 
-  /*
-   * Login
-   */
+
   const loginFunc = async (
     email: string,
     password: string
@@ -108,9 +107,7 @@ export const AuthProvider = ({
     }
   };
 
-  /*
-   * Registro
-   */
+
   const registerFunc = async (data: any) => {
     try {
       setLoading(true);
@@ -128,9 +125,7 @@ export const AuthProvider = ({
     }
   };
 
-  /*
-   * Recuperação de senha
-   */
+
   const forgout_pass = async (email: string) => {
     try {
       setLoading(true);
@@ -150,9 +145,6 @@ export const AuthProvider = ({
     }
   };
 
-  /*
-   * Marcar notificação como lida
-   */
   const markNotificationAsRead = async (
     notificationId: string
   ) => {
@@ -177,6 +169,12 @@ export const AuthProvider = ({
     (n) => !n.readAt
   ).length;
 
+  const logoutFunc = async () => {
+    const res = await logout();
+    
+    setUser(null)
+  }
+
   const contextValues: IAuthContextProps = {
     loginFunc,
     loading,
@@ -188,6 +186,7 @@ export const AuthProvider = ({
     markNotificationAsRead,
     notification,
     unreadCount,
+    logoutFunc
   };
 
   return (

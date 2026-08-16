@@ -34,7 +34,6 @@ export function Comments({ post_id, postAuthor }: ICommentsProps) {
   const [sending, setSending] = useState<boolean>(false);
 
   const { listComments, comment } = useActionContext();
-  const { token } = useAuthContext();
 
 
   // Criar comentário
@@ -43,8 +42,8 @@ export function Comments({ post_id, postAuthor }: ICommentsProps) {
     try {
       if (!text.trim()) return;
 
-      await createComents(text, post_id, token);
-      await listComments(post_id, token);
+      await createComents(text, post_id);
+      await listComments(post_id);
 
       setText("");
     } finally {
@@ -59,7 +58,7 @@ export function Comments({ post_id, postAuthor }: ICommentsProps) {
         setOpen(isOpen);
         if (isOpen) {
           setLoadingComments(true);
-          await listComments(post_id, token);
+          await listComments(post_id);
 
           setLoadingComments(false);
         }
