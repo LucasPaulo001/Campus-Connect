@@ -5,7 +5,7 @@ import { UserRepository } from "../../users/user.repository.js";
 import { GroupRepository } from "../group.repository.js";
 
 // Listar grupos de um professor
-export async function ListGroupByTeacherService(userId: string) {
+export async function ListGroupByTeacherService(userId: string | undefined) {
   const user = await UserRepository.findById(userId);
 
   if (!user) {
@@ -48,7 +48,7 @@ export async function ListGroupByTeacherService(userId: string) {
 }
 
 // Listar grupo de um participante
-export async function ListGroupByUserService(userId: string) {
+export async function ListGroupByUserService(userId: string | undefined) {
 
   const user = await UserRepository.findById(userId);
 
@@ -64,7 +64,7 @@ export async function ListGroupByUserService(userId: string) {
 }
 
 // Listar detalhes do grupo
-export async function ListGroupDetailService(groupId: string, userId: string) {
+export async function ListGroupDetailService(groupId: string, userId: string | undefined) {
 
   const author = await TeacherRepository.findByUser(userId);
 

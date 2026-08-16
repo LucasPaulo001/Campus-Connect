@@ -4,7 +4,7 @@ import { UserRepository } from "../../users/user.repository.js";
 import { StudentRepository } from "../student.repository.js";
 
 type TBecomeStudent = {
-  userId: string;
+  userId: string | undefined;
   avatarUrl: string;
   course: string;
   socialLinks?: TSocialLinks;

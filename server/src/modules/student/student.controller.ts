@@ -2,8 +2,12 @@ import { Response } from "express";
 import { CustomRequest } from "../../middlewares/AuthGuard.js";
 import { BecomeStudentService } from "./services/StudentAction.service.js";
 
-export async function BecomeStudentController(req: CustomRequest, res: Response){
-    try{
+export async function BecomeStudentController(req: CustomRequest, res: Response) {
+    try {
+
+        if (!req.user) {
+            throw new Error("Usuário indefinido.")
+        }
 
         const userId = req.user._id;
 
@@ -14,7 +18,7 @@ export async function BecomeStudentController(req: CustomRequest, res: Response)
         res.status(201).json({ msg: result.msg, estudante: result.estudante });
 
     }
-    catch(err: any){
+    catch (err: any) {
 
         res.status(500).json({
             msg: "Erro interno do servidor",

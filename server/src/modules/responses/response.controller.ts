@@ -9,6 +9,11 @@ export async function CreateResponseController(
   res: Response
 ) {
   try {
+
+    if (!req.user) {
+      throw new Error("Usuário indefinido.")
+    }
+
     const authorId = req.user._id;
 
     const commentId = req.params.id;
@@ -32,7 +37,7 @@ export async function DeleteResponseController(
   res: Response
 ) {
 
-  try{
+  try {
 
     const responseId = req.params.id;
 
@@ -41,7 +46,7 @@ export async function DeleteResponseController(
     res.status(200).json({ msg: result.msg });
 
   }
-  catch(err: any){
+  catch (err: any) {
     res.status(500).json({
       msg: "Erro interno do servidor.",
       err: err.message,
@@ -51,8 +56,12 @@ export async function DeleteResponseController(
 }
 
 // Editar resposta
-export async function EditResponseController(req: CustomRequest, res: Response){
-  try{
+export async function EditResponseController(req: CustomRequest, res: Response) {
+  try {
+
+    if (!req.user) {
+      throw new Error("Usuário indefinido.")
+    }
 
     const userId = req.user._id;
 
@@ -65,7 +74,7 @@ export async function EditResponseController(req: CustomRequest, res: Response){
     res.status(201).json({ msg: result.msg, new: result.new });
 
   }
-  catch(err: any){
+  catch (err: any) {
     res.status(500).json({
       msg: "Erro interno do servidor.",
       err: err.message,
@@ -74,8 +83,12 @@ export async function EditResponseController(req: CustomRequest, res: Response){
 }
 
 // Like em respostas
-export async function LikeResponsesController(req: CustomRequest, res: Response){
-  try{
+export async function LikeResponsesController(req: CustomRequest, res: Response) {
+  try {
+
+    if (!req.user) {
+      throw new Error("Usuário indefinido.")
+    }
 
     const userId = req.user._id;
 
@@ -83,10 +96,10 @@ export async function LikeResponsesController(req: CustomRequest, res: Response)
 
     const result = await LikeResponseService(userId, responseId);
 
-    res.status(200).json({msg: result.msg, liked: result.liked});
+    res.status(200).json({ msg: result.msg, liked: result.liked });
 
   }
-  catch(err: any){
+  catch (err: any) {
     res.status(500).json({
       msg: "Erro interno do servidor.",
       err: err.message,
@@ -95,17 +108,17 @@ export async function LikeResponsesController(req: CustomRequest, res: Response)
 }
 
 // Listar respostas de um comentário
-export async function ListResponsesController(req: CustomRequest, res: Response){
-  try{
-  
+export async function ListResponsesController(req: CustomRequest, res: Response) {
+  try {
+
     const commentId = req.params.id;
 
     const result = await ListResponsesService(commentId);
 
-    res.status(200).json({count: result.count, responses: result.formatedData});
+    res.status(200).json({ count: result.count, responses: result.formatedData });
 
   }
-  catch(err: any){
+  catch (err: any) {
 
     res.status(500).json({
       msg: "Erro interno do servidor.",

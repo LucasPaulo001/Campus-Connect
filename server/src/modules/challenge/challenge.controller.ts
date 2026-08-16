@@ -12,6 +12,11 @@ export async function CreateChallengeController(
   res: Response
 ) {
   try {
+
+    if (!req.user) {
+      throw new Error("Usuário indefinido.")
+    }
+
     const authorId = req.user._id;
 
     const groupId = req.params.id;
@@ -39,6 +44,11 @@ export async function DeleteChallengeController(
   res: Response
 ) {
   try {
+
+    if (!req.user) {
+      throw new Error("Usuário indefinido.")
+    }
+
     const userId = req.user._id;
 
     const challengeId = req.params.id;
@@ -57,7 +67,7 @@ export async function ListChallengeByGroupController(
   res: Response
 ) {
 
-  try{
+  try {
 
     const groupId = req.params.id;
 
@@ -66,7 +76,7 @@ export async function ListChallengeByGroupController(
     res.status(200).json(result.formatedData);
 
   }
-  catch(err: any){
+  catch (err: any) {
     res.status(500).json({ error: err.message });
   }
 
@@ -76,8 +86,12 @@ export async function ListChallengeByGroupController(
 export async function ResponseChallengeQuizController(
   req: CustomRequest,
   res: Response
-){
-  try{
+) {
+  try {
+
+    if (!req.user) {
+      throw new Error("Usuário indefinido.")
+    }
 
     const userId = req.user._id;
 
@@ -90,7 +104,7 @@ export async function ResponseChallengeQuizController(
     res.status(201).json(result);
 
   }
-  catch(err: any){
+  catch (err: any) {
 
     res.status(500).json({ error: err });
 

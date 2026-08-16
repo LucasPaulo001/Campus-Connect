@@ -5,7 +5,7 @@ import { ChallengeRepository } from "../challenge.repository.js";
 import { UserRepository } from "../../users/user.repository.js";
 
 type TDataCreate = {
-  authorId: string;
+  authorId: string | undefined;
   groupId: string;
   title: string;
   description: string;
@@ -61,7 +61,7 @@ export async function CreateChallengeService({
 
 // Deletar desafio
 export async function DeleteChallengeService(
-  userId: string,
+  userId: string | undefined,
   challengeId: string
 ) {
   const teacher = await TeacherRepository.findByUser(userId);
@@ -85,7 +85,7 @@ export async function DeleteChallengeService(
 
 // Respondendo o Challenge
 export async function ResponseChallengeQuizService(
-  userId: string,
+  userId: string | undefined,
   challengeId: string,
   questionIndex: number,
   responseIndex: number

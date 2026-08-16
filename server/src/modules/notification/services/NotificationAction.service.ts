@@ -1,6 +1,6 @@
 import { NotificationRepository } from "../notificatioin.repository.js";
 
-export async function MarkNotificationAsRead(notificationId: string, userId: string){
+export async function MarkNotificationAsRead(notificationId: string, userId: string | undefined){
     const result = await NotificationRepository.markAsRead(notificationId, userId);
 
     if(result.matchedCount === 0){

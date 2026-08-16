@@ -6,6 +6,10 @@ import { ListResponseChallengeService } from "./services/responseChallengeList.s
 export async function CreateResponseChallengeController(req: CustomRequest, res: Response) {
     try {
 
+        if (!req.user) {
+            throw new Error("Usuário indefinido.")
+        }
+
         const userId = req.user._id;
 
         const challengeId = req.params.id;
@@ -30,11 +34,15 @@ export async function CreateResponseChallengeController(req: CustomRequest, res:
 export async function FeedBackResponseController(req: CustomRequest, res: Response) {
     try {
 
+        if (!req.user) {
+            throw new Error("Usuário indefinido.")
+        }
+
         const responseChaId = req.params.id;
 
         const teacherId = req.user._id;
 
-        const {feedback} = req.body;
+        const { feedback } = req.body;
 
         const result = await FeedBackResponse(responseChaId, teacherId, feedback);
 
@@ -50,8 +58,8 @@ export async function FeedBackResponseController(req: CustomRequest, res: Respon
     }
 }
 
-export async function ListResponseChallengeController(req: CustomRequest, res: Response){
-    try{
+export async function ListResponseChallengeController(req: CustomRequest, res: Response) {
+    try {
 
         const responseChallegeId = req.params.id;
 
@@ -59,7 +67,7 @@ export async function ListResponseChallengeController(req: CustomRequest, res: R
 
         res.status(200).json(result);
     }
-    catch(err: any){
+    catch (err: any) {
         res.status(500).json({
             msg: "Erro interno do servidor.",
             error: err.message

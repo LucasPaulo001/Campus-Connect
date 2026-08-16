@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { FollowRepository } from "../follow.repository.js";
 
 
-export async function ListFollowersService(followingId: string) {
+export async function ListFollowersService(followingId: string | undefined) {
   if (!followingId) {
     throw new Error("Id de usuário inválido.");
   }

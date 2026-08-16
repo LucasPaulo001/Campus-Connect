@@ -6,7 +6,7 @@ import { UserRepository } from "../../users/user.repository.js";
 import { ResponseChallengeRepository } from "../responseChallenge.repository.js";
 import { TeacherRepository } from "../../teacher/teacher.repository.js";
 
-export async function CreateResponseChallengeService(userId: string, challengeId: string, response: string) {
+export async function CreateResponseChallengeService(userId: string | undefined, challengeId: string, response: string) {
 
     const user = await UserRepository.findById(userId);
 
@@ -38,7 +38,7 @@ export async function CreateResponseChallengeService(userId: string, challengeId
 }
 
 // feedback e atribuiçao de de xp do professor
-export async function FeedBackResponse(responseChaId: string, teacherId: string, feedback: string) {
+export async function FeedBackResponse(responseChaId: string, teacherId: string | undefined, feedback: string) {
 
     if (!feedback || feedback.trim().length === 0) {
         throw new Error("O feedback não pode ser vazio.");

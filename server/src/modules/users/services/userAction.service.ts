@@ -1,7 +1,7 @@
 import { UserRepository } from "../user.repository.js";
 
 // listar dados de outro usuáiro
-export async function ProfileUsersService(userId: string) {
+export async function ProfileUsersService(userId: string | undefined) {
 
     const user = await UserRepository.findById(userId);
 

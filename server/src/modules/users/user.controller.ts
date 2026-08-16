@@ -56,6 +56,11 @@ export async function LoginController(req: CustomRequest, res: Response) {
 
 // Perfil
 export async function ProfileController(req: CustomRequest, res: Response) {
+
+  if (!req.user) {
+    throw new Error("Usuário indefinido.")
+  }
+
   const user = req.user;
   const result = await ProfileService(user);
 
@@ -65,6 +70,11 @@ export async function ProfileController(req: CustomRequest, res: Response) {
 // Editar dados do prfil
 export async function ProfileEditController(req: CustomRequest, res: Response) {
   try {
+
+    if (!req.user) {
+      throw new Error("Usuário indefinido.")
+    }
+
     const id = req.user._id;
 
     const updates = req.body;
@@ -80,6 +90,10 @@ export async function ProfileEditController(req: CustomRequest, res: Response) {
 // Buscar usuários
 export async function SearchUserController(req: CustomRequest, res: Response) {
   try {
+
+    if (!req.user) {
+      throw new Error("Usuário indefinido.")
+    }
 
     const { q } = req.query
 

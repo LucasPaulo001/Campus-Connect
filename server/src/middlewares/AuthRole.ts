@@ -12,6 +12,10 @@ export const AuthRole = (...allowedRole: string[]) => {
         return res.status(401).json({ error: "Usuário não autênticado." });
       }
 
+      if(!user.role){
+        throw new Error("Usuário com role indefinido.")
+      }
+
       if (!allowedRole.includes(user.role)) {
         return res.status(403).json({ error: "Permissão negada." });
       }

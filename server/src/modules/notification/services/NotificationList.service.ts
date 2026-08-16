@@ -1,7 +1,7 @@
 import { UserRepository } from "../../users/user.repository.js";
 import { NotificationRepository } from "../notificatioin.repository.js";
 
-export async function ListNotificationsService(userId: string) {
+export async function ListNotificationsService(userId: string | undefined) {
     const user = await UserRepository.findById(userId)
 
     if (!user) throw new Error("Usuário não encontrado.");

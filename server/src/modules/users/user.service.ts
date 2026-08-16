@@ -103,7 +103,7 @@ export async function ProfileService(user: TUser) {
 }
 
 // Editar dados
-export async function ProfileEditService(id: string, data: TUpdateUser) {
+export async function ProfileEditService(id: string | undefined, data: TUpdateUser) {
   const user = await UserRepository.findById(id);
 
     if(!user) throw new Error("Usuário não encontrado.");
@@ -216,8 +216,12 @@ export async function LogoutService(refreshToken: string){
 }
 
 // Buscar usuários
-export async function SearchUsersService(userId: string, query: string) {
+export async function SearchUsersService(userId: string | undefined, query: string) {
   if (!query) return [];
+
+  if (!userId) {
+    throw new Error("Usuário indefinido.")
+  }
 
   const users = await UserRepository.search(userId, query);
 

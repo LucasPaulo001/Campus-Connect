@@ -5,7 +5,7 @@ import { GroupRepository } from "../group.repository.js";
 import { UserRepository } from "../../users/user.repository.js";
 
 type TData = {
-  authorId: string;
+  authorId: string | undefined;
   name: string;
   description: string;
   members: Types.ObjectId[];
@@ -50,7 +50,7 @@ export async function CreateGroupService({
 }
 
 // Deletar grupos
-export async function DeleteGroupService(groupId: string, userId: string) {
+export async function DeleteGroupService(groupId: string, userId: string | undefined) {
   const group = await GroupRepository.findById(groupId);
 
   if (!group) {
@@ -96,7 +96,7 @@ type TDataUpdates = {
 
 // Editar dados do grupo
 export async function EditGroupDataService(
-  userId: string,
+  userId: string | undefined,
   groupId: string,
   updates: TDataUpdates
 ) {

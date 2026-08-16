@@ -4,24 +4,32 @@ import { FollowService } from "./services/followAction.service.js";
 import { ListFollowersService } from "./services/followList.service.js";
 
 // Seguir
-export async function FollowController(req: CustomRequest, res: Response){
-    try{
+export async function FollowController(req: CustomRequest, res: Response) {
+  try {
 
-        const followerId = req.user._id;
-        const followingId = req.params.id;
-
-        const result = await FollowService(followerId, followingId);
-
-        res.status(200).json(result);
-
+    if (!req.user) {
+      throw new Error("Usuário indefinido.")
     }
-    catch(err: any){
-        res.status(500).json({error: err.message});
-    }
+
+    const followerId = req.user._id;
+    const followingId = req.params.id;
+
+    const result = await FollowService(followerId, followingId);
+
+    res.status(200).json(result);
+
+  }
+  catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
 }
 
 export async function ListFollowsController(req: CustomRequest, res: Response) {
-  try{
+  try {
+
+    if (!req.user) {
+      throw new Error("Usuário indefinido.")
+    }
 
     const userId = req.user._id;
 
@@ -30,7 +38,7 @@ export async function ListFollowsController(req: CustomRequest, res: Response) {
     res.status(200).json(result);
 
   }
-  catch(err: any){
+  catch (err: any) {
     res.status(500).json({ err: err });
   }
 }

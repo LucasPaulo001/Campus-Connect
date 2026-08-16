@@ -7,7 +7,7 @@ import { ToggleLike } from "../../../services/Like.service.js";
 
 // Criar resposta
 export async function CreateResponseService(
-  authorId: string,
+  authorId: string | undefined,
   commentId: string,
   content: string
 ) {
@@ -66,7 +66,7 @@ type TUpdatesResponse = {
 // Editar resposta
 export async function EditResponseService(
   responseId: string,
-  userId: string,
+  userId: string | undefined,
   updates: TUpdatesResponse
 ) {
   const response = await ResponseRepository.findById(responseId);
@@ -98,7 +98,12 @@ export async function EditResponseService(
 }
 
 // Curtir resposta
-export async function LikeResponseService(userId: string, responseId: string) {
+export async function LikeResponseService(userId: string | undefined, responseId: string) {
+
+  if(!userId){
+    throw new Error("Usuário indefinido.");
+  }
+
   return ToggleLike({
     userId,
     entityName: "Resposta",

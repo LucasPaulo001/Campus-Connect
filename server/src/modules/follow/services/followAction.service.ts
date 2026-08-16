@@ -5,7 +5,7 @@ import { NotificationCreate } from "../../../services/Notification.service.js";
 import { NotificationType } from "../../../@types/notification/notificatio.type.js";
 
 // Seguir outro usuário
-export async function FollowService(followerId: string, followingId: string) {
+export async function FollowService(followerId: string | undefined, followingId: string) {
   if (followerId === followingId) {
     throw new Error("Você não pode se seguir.");
   }
