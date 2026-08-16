@@ -6,7 +6,7 @@ export const TeacherRepository = {
         return teacherModel.findById(id);
     },
 
-    findByUser(id: string){
+    findByUser(id: string | undefined){
         return teacherModel.findOne({ user: id });
     },
 

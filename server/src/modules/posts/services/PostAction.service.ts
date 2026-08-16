@@ -19,7 +19,7 @@ export type TCreatePostRequest = {
   title: string;
   content: string;
   tags: string[];
-  author: string;
+  author: string | undefined;
 };
 
 // Criar postagem
@@ -72,7 +72,7 @@ export async function DeletePostService(postId: string) {
 }
 
 // Salvar postagens
-export async function SavePostService(postId: string, userId: string) {
+export async function SavePostService(postId: string, userId: string | undefined) {
   const post = await PostRepository.findById(postId);
 
   console.log(postId);
@@ -122,7 +122,7 @@ type DataUpdatePost = {
 
 // Editar postagem
 export async function EditPostService(
-  authorId: string,
+  authorId: string | undefined,
   postId: string,
   updates: DataUpdatePost
 ) {
@@ -157,7 +157,7 @@ export async function EditPostService(
 }
 
 // Curtir postagens
-export async function LikePostService(postId: string, userId: string) {
+export async function LikePostService(postId: string, userId: string | undefined) {
   const user = await UserRepository.findById(userId);
 
   if (!user) {
@@ -168,6 +168,10 @@ export async function LikePostService(postId: string, userId: string) {
 
   if (!post) {
     throw new Error("Postagem não encontrada.");
+  }
+
+  if (!userId) {
+    throw new Error("Usuário indefinido.");
   }
 
   const result = await ToggleLike({

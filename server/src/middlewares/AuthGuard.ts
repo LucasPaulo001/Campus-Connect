@@ -2,12 +2,13 @@ import userModel from "../modules/users/user.model.js";
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
+import { TUser } from "../@types/user/user.type.js";
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export interface CustomRequest extends Request {
-  user?: any;
+  user?: TUser;
 }
 
 export const authGuard = async (

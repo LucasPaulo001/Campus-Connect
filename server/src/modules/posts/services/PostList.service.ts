@@ -6,7 +6,7 @@ import postModel from "../post.model.js";
 import { PostRepository } from "../post.repository.js";
 
 // Listar postagens
-export async function ListAllPostService(userId: string, page: number, limit: number) {
+export async function ListAllPostService(userId: string | undefined, page: number, limit: number) {
   const {
     posts,
     total,
@@ -51,7 +51,7 @@ export async function ListAllPostService(userId: string, page: number, limit: nu
 }
 
 // Listar postagens do author
-export async function ListAuthorPostsService(authorId: string) {
+export async function ListAuthorPostsService(authorId: string | undefined) {
   const user = await UserRepository.findById(authorId);
   if (!user) {
     throw new Error("Usuário não encontrado.");
@@ -99,7 +99,7 @@ export async function ListAuthorPostsService(authorId: string) {
 }
 
 // Listar postagens salvas
-export async function ListSavePostsService(userId: string) {
+export async function ListSavePostsService(userId: string | undefined) {
   const user = await UserRepository.findById(userId);
 
   if (!user) {

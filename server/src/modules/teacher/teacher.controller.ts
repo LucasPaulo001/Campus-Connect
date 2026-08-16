@@ -8,6 +8,10 @@ export async function BecomeTeacherController(
 ) {
   try {
 
+    if(!req.user){
+      throw new Error("Usuário indefinido.");
+    }
+
     const userId = req.user._id;
     const { avatarUrl, area, expertise, socialLinks } = req.body;
 

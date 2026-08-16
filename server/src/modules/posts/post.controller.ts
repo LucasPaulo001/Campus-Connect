@@ -6,7 +6,11 @@ import { ListAllPostService, ListAuthorPostsService, ListPostByTeacherService, L
 
 // Criar postagem
 export async function CreatePostController(req: CustomRequest, res: Response) {
-    try{
+    try {
+
+        if (!req.user) {
+            throw new Error("Usuário indefinido.");
+        }
 
         const author = req.user._id;
 
@@ -14,22 +18,26 @@ export async function CreatePostController(req: CustomRequest, res: Response) {
 
         const result = await CreatePostService({ title, content, tags, author });
 
-        res.status(201).json({msg: result.post, post: result.msg});
+        res.status(201).json({ msg: result.post, post: result.msg });
 
     }
-    catch(err: any){
-        res.status(500).json({error: "Erro interno do servidor.", err: err.message});
+    catch (err: any) {
+        res.status(500).json({ error: "Erro interno do servidor.", err: err.message });
     }
 }
 
 // Listar postagem
 export async function ListAllPostController(req: CustomRequest, res: Response) {
-    try{
+    try {
+
+        if (!req.user) {
+            throw new Error("Usuário indefinido.");
+        }
 
         const userId = req.user._id;
 
         const page = Number(req.query.page) || 1;
-        
+
         const limit = Number(req.query.limit) || 10;
 
         const result = ListAllPostService(userId, page, limit);
@@ -37,14 +45,14 @@ export async function ListAllPostController(req: CustomRequest, res: Response) {
         res.status(200).json((await result).dataFormated);
 
     }
-    catch(err: any){
-        res.status(500).json({error: "Erro interno do servidor.", err});
+    catch (err: any) {
+        res.status(500).json({ error: "Erro interno do servidor.", err });
     }
 }
 
 // Deletar postagem
 export async function DeletePostController(req: CustomRequest, res: Response) {
-    try{
+    try {
 
         const userId = req.params.id
 
@@ -53,14 +61,18 @@ export async function DeletePostController(req: CustomRequest, res: Response) {
         res.status(200).json(result);
 
     }
-    catch(err: any){
+    catch (err: any) {
         res.status(500).json("Erro interno do servidor.");
     }
 }
 
 // Listagem de postagens do usuário
 export async function ListAuthorPostsController(req: CustomRequest, res: Response) {
-    try{
+    try {
+
+        if (!req.user) {
+            throw new Error("Usuário indefinido.");
+        }
 
         const authorId = req.user._id;
 
@@ -69,57 +81,71 @@ export async function ListAuthorPostsController(req: CustomRequest, res: Respons
         res.status(200).json(result.dataFormated);
 
     }
-    catch(err: any){
-        res.status(500).json({error: "Erro interno do servidor.", err: err.message});
+    catch (err: any) {
+        res.status(500).json({ error: "Erro interno do servidor.", err: err.message });
     }
 }
 
 // Salvar postagem
 export async function SavePostController(req: CustomRequest, res: Response) {
-    try{
+    try {
+
+        if (!req.user) {
+            throw new Error("Usuário indefinido.");
+        }
+
         const userId = req.user._id;
         const postId = req.params.id;
 
         const result = await SavePostService(postId, userId);
 
-        res.status(201).json({msg: result.msg, post: result.post, saved: result.saved});
+        res.status(201).json({ msg: result.msg, post: result.post, saved: result.saved });
     }
-    catch(err: any){
-        res.status(500).json({error: "Erro interno do servidor.", err: err.message});
+    catch (err: any) {
+        res.status(500).json({ error: "Erro interno do servidor.", err: err.message });
     }
 }
 
 // Listar postagens salvas
-export async function ListSavePostsController(req: CustomRequest, res: Response){
-    try{
+export async function ListSavePostsController(req: CustomRequest, res: Response) {
+    try {
+
+        if (!req.user) {
+            throw new Error("Usuário indefinido.");
+        }
+
         const userId = req.user._id;
 
         const result = await ListSavePostsService(userId);
 
-        res.status(201).json({post: result.posts});
+        res.status(201).json({ post: result.posts });
     }
-    catch(err: any){
-        res.status(500).json({error: "Erro interno do servidor.", err: err.message});
+    catch (err: any) {
+        res.status(500).json({ error: "Erro interno do servidor.", err: err.message });
     }
 }
 
 // Listar postagens de um professor
-export async function ListPostByTeacherController(req: CustomRequest, res: Response){
-    try{
+export async function ListPostByTeacherController(req: CustomRequest, res: Response) {
+    try {
         const teacherId = req.params.id;
 
         const result = await ListPostByTeacherService(teacherId);
 
-        res.status(201).json({post: result.posts});
+        res.status(201).json({ post: result.posts });
     }
-    catch(err: any){
-        res.status(500).json({error: "Erro interno do servidor.", err: err.message});
+    catch (err: any) {
+        res.status(500).json({ error: "Erro interno do servidor.", err: err.message });
     }
 }
 
 // Editar postagem
-export async function EditPostController(req: CustomRequest, res: Response){
-    try{
+export async function EditPostController(req: CustomRequest, res: Response) {
+    try {
+
+        if (!req.user) {
+            throw new Error("Usuário indefinido.");
+        }
 
         const authorId = req.user._id;
 
@@ -129,16 +155,20 @@ export async function EditPostController(req: CustomRequest, res: Response){
 
         const result = await EditPostService(authorId, postId, updates);
 
-        res.status(201).json({msg: result.msg, post: result.post});
+        res.status(201).json({ msg: result.msg, post: result.post });
     }
-    catch(err: any){
-        res.status(500).json({error: "Erro interno do servidor.", err: err.message});
+    catch (err: any) {
+        res.status(500).json({ error: "Erro interno do servidor.", err: err.message });
     }
 }
 
 // Curtir postagem
-export async function LikePostController(req: CustomRequest, res: Response){
-    try{
+export async function LikePostController(req: CustomRequest, res: Response) {
+    try {
+
+        if (!req.user) {
+            throw new Error("Usuário indefinido.");
+        }
 
         const userId = req.user._id;
 
@@ -146,10 +176,10 @@ export async function LikePostController(req: CustomRequest, res: Response){
 
         const result = await LikePostService(postId, userId);
 
-        res.status(201).json({msg: result.msg, liked: result.liked});
+        res.status(201).json({ msg: result.msg, liked: result.liked });
 
     }
-    catch(err: any){
-        res.status(500).json({error: "Erro interno do servidor.", err: err.message});
+    catch (err: any) {
+        res.status(500).json({ error: "Erro interno do servidor.", err: err.message });
     }
 }

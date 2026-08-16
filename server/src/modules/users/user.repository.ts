@@ -2,7 +2,7 @@ import { TUser } from "../../@types/user/user.type.js";
 import userModel from "./user.model.js";
 
 export const UserRepository = {
-  findById(id: string) {
+  findById(id: string | undefined) {
     return userModel.findById(id).populate("postsSaveds");
   },
 
@@ -18,7 +18,7 @@ export const UserRepository = {
     return userModel.find();
   },
 
-  update(id: string, data: Partial<TUser>) {
+  update(id: string | undefined, data: Partial<TUser>) {
     return userModel
       .findByIdAndUpdate(id, data, {
         new: true,

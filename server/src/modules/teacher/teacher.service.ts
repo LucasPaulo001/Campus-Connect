@@ -3,7 +3,7 @@ import { UserRepository } from "../users/user.repository.js";
 import { TeacherRepository } from "./teacher.repository.js";
 
 type TBecomeTeacher = {
-  userId: string;
+  userId: string | undefined;
   avatarUrl: string;
   area: string;
   expertise: string[];
@@ -41,6 +41,5 @@ export default async function BecomeTeacherService({
 
   return {
     msg: "Professor criado com sucesso.",
-    professor: newTeacher,
   };
 }

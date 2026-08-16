@@ -9,11 +9,13 @@ import { NotificationType } from "../../../@types/notification/notificatio.type.
 
 // Criar comentário
 export async function CreateCommentService(
-  author: string,
+  author: string | undefined,
   content: string,
   postId: string
 ) {
+
   const user = await UserRepository.findById(author);
+  console.log(user)
 
   if (!user) {
     throw new Error("Usuário não encontrado.");
@@ -40,26 +42,27 @@ export async function CreateCommentService(
 
   const newComment = await CommentRepository.create(data);
 
+
   const authorProfile = post.author as any;
   const authorUserId = authorProfile.user.toString();
 
-    if (authorUserId !== user._id.toString()) {
+  if (authorUserId !== user._id.toString()) {
 
 
-      await NotificationCreate(authorProfile.user, "Alguém comentou na sua postagem", NotificationType.COMMENT);
+    await NotificationCreate(authorProfile.user, "Alguém comentou na sua postagem", NotificationType.COMMENT);
 
-      io.to(authorUserId).emit("notification", {
-        type: "comment",
-        message: "Alguém comentou na sua postagem.",
-        postId,
-        fromUser: {
-          id: user._id,
-          name: user.name,
-          avatarUrl: user.avatarUrl
-        },
-        createdAt: new Date(),
-      });
-    }
+    io.to(authorUserId).emit("notification", {
+      type: "comment",
+      message: "Alguém comentou na sua postagem.",
+      postId,
+      fromUser: {
+        id: user._id,
+        name: user.name,
+        avatarUrl: user.avatarUrl
+      },
+      createdAt: new Date(),
+    });
+  }
 
   return {
     msg: "Comentário adicionado.",
@@ -68,7 +71,7 @@ export async function CreateCommentService(
 }
 
 // Deletar comentário
-export async function DeleteCommentService(commentId: string, userId: string) {
+export async function DeleteCommentService(commentId: string, userId: string | undefined) {
   const comment = await CommentRepository.findById(commentId);
 
   if (!comment) {
@@ -98,7 +101,7 @@ type TDataEditComment = {
 
 // Editar comentário
 export async function EditCommentService(
-  authorId: string,
+  authorId: string | undefined,
   commentId: string,
   updates: TDataEditComment
 ) {
@@ -131,8 +134,10 @@ export async function EditCommentService(
 }
 
 // Like em comentários
-export async function LikeCommentService(userId: string, commentId: string) {
+export async function LikeCommentService(userId: string | undefined, commentId: string) {
   const comment = await CommentRepository.findById(commentId);
+
+  if(!userId) throw new Error("Id de usuário indefinido.");
 
   const user = await UserRepository.findById(userId);
 

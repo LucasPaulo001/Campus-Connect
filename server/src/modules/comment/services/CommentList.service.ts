@@ -11,7 +11,7 @@ type TResponseAuthor = {
 }
 
 // Listar comentários de uma postagem
-export async function ListCommentsByPostService(postId: string, userId: string){
+export async function ListCommentsByPostService(postId: string, userId: string | undefined){
   
   const post = await PostRepository.findById(postId);
 
