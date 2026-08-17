@@ -29,14 +29,12 @@ export function SearchPerson({ open, setOpen }: ISearchPersonProps) {
   const [query, setQuery] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { token } = useAuthContext();
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setLoading(true);
     try {
       e.preventDefault();
 
-      const data = await SearchStudents(token, query);
+      const data = await SearchStudents(query);
 
       setUsers(data);
     } finally {

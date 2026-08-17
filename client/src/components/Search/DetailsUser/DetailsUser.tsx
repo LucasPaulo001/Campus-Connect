@@ -25,13 +25,12 @@ interface DetailsUserProps {
 }
 
 export function DetailsUser({ user }: DetailsUserProps) {
-  const { token } = useAuthContext();
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleFollow = async () => {
     setLoading(true);
     try {
-      const res = await FollowUser(token, user.id);
+      const res = await FollowUser(user.id);
       toast.success(res.msg ?? "Agora você está seguindo este usuário");
     } catch (err: any) {
       toast.error(err.response?.data?.error ?? "Erro ao seguir usuário");

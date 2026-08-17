@@ -42,7 +42,6 @@ export default function PostTools({
   type,
   commentId
 }: ICommentToolsProps) {
-  const { token } = useAuthContext();
   const { listComments, setPosts, setMyPosts } = useActionContext();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -51,7 +50,7 @@ export default function PostTools({
   const handleDeletePost = async () => {
     setLoading(true);
     try {
-      await deletePost(id, token);
+      await deletePost(id);
 
     // Atualiza feed sem
     setPosts(prev => prev.filter(post => post.id !== id));
@@ -67,15 +66,15 @@ export default function PostTools({
 
   // Deletar comentário
   const handleDeleteComment = async () => {
-    await deleteComment(id, token);
-    await listComments(post_id, token);
+    await deleteComment(id);
+    await listComments(post_id);
     toast.success("Comentário deletado com sucesso");
   };
 
   // Deletar resposta
   const handleDeleteResponse = async () => {
-    await deleteResponse(id, token);
-    await loadResponses(commentId, token);
+    await deleteResponse(id);
+    await loadResponses(commentId);
     toast.success("Resposta deletada com sucesso");
   }
  

@@ -1,16 +1,16 @@
 import { ParamValue } from "next/dist/server/request/params";
-import axiosInstace from "./axios/axiosInstance";
+import axiosInstance from "./axios/axiosInstance";
 
 // Listagem de grupos criados pelo professor
 export const LoadGroups = async () => {
-  const res = await axiosInstace.get("api/group/user");
+  const res = await axiosInstance.get("api/group/user");
 
   return res.data;
 };
 
 // Busca de estudantes
 export const SearchStudents = async (q: string) => {
-  const res = await axiosInstace.get(`/api/search/user?q=${q}`);
+  const res = await axiosInstance.get(`/api/search/user?q=${q}`);
 
   return res.data;
 };
@@ -21,7 +21,7 @@ export const CreateNewGroup = async (
   description: string,
   members: string[],
 ) => {
-  const res = await axiosInstace.post(
+  const res = await axiosInstance.post(
     "/api/group",
     {
       name,
@@ -37,7 +37,7 @@ export const CreateNewGroup = async (
 export const LoadGroup = async (
   group_id: number | ParamValue
 ) => {
-  const res = await axiosInstace.get(`/api/group/${group_id}`);
+  const res = await axiosInstance.get(`/api/group/${group_id}`);
 
   return res.data;
 };
@@ -50,7 +50,7 @@ export const CreateChallenge = async (
   type: string,
   data: any,
 ) => {
-  const res = await axiosInstace.post(
+  const res = await axiosInstance.post(
     `/api/challenge/group/${group_id}`,
     {
       title,
@@ -65,14 +65,14 @@ export const CreateChallenge = async (
 
 // Listar desafios
 export const LoadChallenges = async (group_id: string) => {
-  const res = await axiosInstace.get(`/api/challenges/group/${group_id}`);
+  const res = await axiosInstance.get(`/api/challenges/group/${group_id}`);
 
   return res.data;
 };
 
 // Deletar desafio
 export const DeleteChallenge = async (challengeId: string) => {
-  const res = await axiosInstace.delete(`/api/challenge/${challengeId}`);
+  const res = await axiosInstance.delete(`/api/challenge/${challengeId}`);
 
   return res.data;
 }

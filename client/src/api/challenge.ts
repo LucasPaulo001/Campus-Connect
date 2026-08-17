@@ -1,11 +1,11 @@
-import axiosInstace from "./axios/axiosInstance";
+import axiosInstance from "./axios/axiosInstance";
 
 export const ResponseQuiz = async (
   challengeId: string | undefined,
   questionIndex: number,
   responseIndex: number
 ) => {
-  const res = await axiosInstace.post(
+  const res = await axiosInstance.post(
     `/api/challenge/${challengeId}/response`,
     {
         questionIndex,

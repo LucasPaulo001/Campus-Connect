@@ -28,13 +28,13 @@ interface IActionsContext {
 
   posts: IPost[] | [];
 
-  loadNextPage: (token: string) => Promise<void>;
+  loadNextPage: () => Promise<void>;
 
   resetFeed: () => void;
 
   hasNextPage: boolean;
 
-  likeInPost: (post_id: string, token: string) => Promise<void>;
+  likeInPost: (post_id: string) => Promise<void>;
 
   listComments: (
     post_id: string | undefined
@@ -42,15 +42,15 @@ interface IActionsContext {
 
   comment: IComment[] | null;
 
-  listMyPosts: (token: string) => Promise<any>;
+  listMyPosts: () => Promise<any>;
 
   myPosts: IPost[] | [];
 
   postSaved: IPost[] | null;
 
-  listSavedPosts: (token: string) => Promise<void>;
+  listSavedPosts: () => Promise<void>;
 
-  listChallenges: (token: string, group_id: string) => Promise<any>;
+  listChallenges: (group_id: string) => Promise<any>;
 
   challenge: IChallenge[] | null;
 
@@ -96,7 +96,7 @@ export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
   }, [user?.id]);
 
   // Listar postagens do feed
-  const loadNextPage = async (token: string) => {
+  const loadNextPage = async () => {
     if (isFetchingRef.current || !hasNextPage) return;
 
     isFetchingRef.current = true;

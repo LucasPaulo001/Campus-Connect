@@ -53,8 +53,8 @@ export const PostCard = ({
   const [like, setLike] = useState(liked);
   const [save, setSave] = useState(saved);
   const [likeCounts, setLikeCounts] = useState(likes_count);
-  const { likeInPost, unlikePost } = useActionContext();
-  const { token, user } = useAuthContext();
+  const { likeInPost } = useActionContext();
+  const { user } = useAuthContext();
 
   const { listSavedPosts } = useActionContext();
 
@@ -65,13 +65,13 @@ export const PostCard = ({
 
       setLikeCounts((prev) => prev - 1);
 
-      await likeInPost(postId, token);
+      await likeInPost(postId);
     } else {
       setLike(true);
 
       setLikeCounts((prev) => prev + 1);
 
-      await likeInPost(postId, token);
+      await likeInPost(postId);
     }
   };
 
@@ -80,14 +80,14 @@ export const PostCard = ({
     if (save) {
       setSave(false);
 
-      await SavePosts(postId, token);
+      await SavePosts(postId);
 
-      await listSavedPosts(token);
+      await listSavedPosts();
     } else {
       setSave(true);
-      const data = await SavePosts(postId, token);
+      const data = await SavePosts(postId);
 
-      await listSavedPosts(token);
+      await listSavedPosts();
 
       console.log(data);
 

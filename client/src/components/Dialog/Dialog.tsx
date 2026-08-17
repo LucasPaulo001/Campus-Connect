@@ -17,7 +17,7 @@ import { useActionContext } from "@/contexts/ActionsContext";
 import { MarkdownEditor } from "../MdEditor/MdEditor";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { addPost, editPost, editComment } from "@/api/posts";
+import { addPost, editPost, editComment, loadPosts } from "@/api/posts";
 import { DialogType } from "@/types";
 import { CreateGroup } from "../CreateGroup/CreateGroup";
 import { DialogTitle } from "@radix-ui/react-dialog";
@@ -53,8 +53,7 @@ export function Dialogs({
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const { token } = useAuthContext();
-  const { setPosts, setMyPosts, listPosts } = useActionContext();
+  const { setPosts, setMyPosts } = useActionContext();
 
   useEffect(() => {
     if (open && tagsPost) {
@@ -71,7 +70,7 @@ export function Dialogs({
 
     setLoading(true);
     try {
-      await editComment(id, value, token);
+      await editComment(id, value);
       toast.success("Comentário editado!");
     } finally {
       setLoading(false);
@@ -92,14 +91,13 @@ export function Dialogs({
         .map((t) => t.trim().toLowerCase())
         .filter(Boolean);
 
-      const { msg: createdPost } = await addPost(
-        titlePostagem,
-        value,
-        token,
-        tagsArray
-      );
+      await addPost(titlePostagem, value, tagsArray);
+                                  
+      const updatedPosts = await loadPosts(1);
 
-      await listPosts(token);
+      if (updatedPosts) {
+        setPosts(updatedPosts);
+      }
 
       toast.success("Post criado!");
 
@@ -107,6 +105,8 @@ export function Dialogs({
       setValue("");
       setTags("");
       setOpen(false);
+    } catch (error) {
+      toast.error("Erro ao criar o post.");
     } finally {
       setLoading(false);
     }
@@ -129,11 +129,10 @@ export function Dialogs({
         id,
         titlePostagem,
         value,
-        token,
         tagsArray
       );
 
-      await listPosts(token);
+      await loadPosts(1);
 
       toast.success("Post editado!");
       setOpen(false);
@@ -198,11 +197,11 @@ export function Dialogs({
           {(type === "createPost" ||
             type === "editPost" ||
             type === "editComment") && (
-            <div className="grid gap-3">
-              <Label>{label}*</Label>
-              <MarkdownEditor value={value} setValue={setValue} />
-            </div>
-          )}
+              <div className="grid gap-3">
+                <Label>{label}*</Label>
+                <MarkdownEditor value={value} setValue={setValue} />
+              </div>
+            )}
 
           {(type === "createPost" || type === "editPost") && (
             <div className="grid gap-3">
